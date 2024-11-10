@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.inanimation{
+    animation: normal 1s ease-in-out come 
+}
+
+@keyframes come {
+    0%{
+        translate: 200px;
+    }100%{
+        translate: 0px;
+        
+    }
+}
+
+
+.hide-side-bar::-webkit-scrollbar{
+  height: 0;
+  width: 0;
+}
+
+*{
+    box-sizing: border-box;
+}
