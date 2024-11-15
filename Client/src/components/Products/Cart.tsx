@@ -1,6 +1,6 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import {  useEffect, useState } from 'react'
 import ListProducts from './ListProducts'
-import { useProductContext } from '../../Context/ProductContext'
+// import { useProductContext } from '../../Context/ProductContext'
 import axios from 'axios'
 import { useAuthContext } from '../../Context/authContextPrivider'
 
@@ -24,31 +24,37 @@ interface productType {
 
 }
 const Cart = () => { 
+  const [page,setPage]=useState<number>(0)
+  const [hasMore,setHaseMore]=useState<boolean>(true)
+
     const [Product, setProduct] = useState<productType[]>([])
     const apiurl = import.meta.env.VITE_API_URL
 const {setError}=useAuthContext()
 useEffect(()=>{
-  const fetchCart=async()=>{
-    try {
-
-      const response = await axios.get(`${apiurl}/api/product/cart`, { withCredentials: true })
-
-      console.log(response);
-      if (response?.data?.product) {
-
-          setProduct(response.data.product)
-      }
-
-  } catch (error) {
-      console.log(error);
-      setError((error as Error).message)
-  } finally {
-      // setClear(!clear)
-  }
-  }
   fetchCart()
 },[])
-    
+
+const fetchCart=async()=>{
+  try {
+
+    const response = await axios.get(`${apiurl}/api/product/cart`, { withCredentials: true })
+
+   
+if (response.data.product) {
+    setProduct((prev)=>[...prev,...response.data.product]);
+    setPage(page+1)
+    setHaseMore(true)
+}if (response.data.product.length<10) {
+    setHaseMore(false)
+}
+
+} catch (error) {
+    console.log(error);
+    setError((error as Error).message)
+} finally {
+    // setClear(!clear)
+}
+}
   //   const handleCart =async (productId: string) => {
 
   //     if (!productId) return
@@ -74,7 +80,7 @@ useEffect(()=>{
   return (
     <div className='flex flex-col w-screen h-screen p-2 relative overflow-y-scroll overflow-x-hidden '>
       
-      <ListProducts Product={Product} setProduct={setProduct} />
+      <ListProducts scrollFunc={fetchCart} haseMore={hasMore} Product={Product} setProduct={setProduct} />
     </div>
   )
 }

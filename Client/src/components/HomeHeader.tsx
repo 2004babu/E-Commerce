@@ -36,7 +36,7 @@ useEffect(()=>{
   return (<>
     {open ? <SideBar open={open} setOpen={setOpen}/> :null} 
     <div ref={headerRef} className='fixed top-0 lg:px-6 z-20  h-16 w-screen bg-[#6b4ba4] dark:bg-gary-400 flex flex-row items-center justify-between gap-2 p-2 '>
-      {!open ?<i  onClick={()=>setOpen(!open)} className="fa-solid fa-bars grow-1 text-lg"></i>:(<i  onClick={()=>setOpen(!open)} className="fa-solid fa-xmark grow-1 text-lg"></i>)}
+      {!open ?<i  onClick={()=>setOpen(!open)} className="fa-solid fa-bars grow-1 text-lg cursor-pointer"></i>:(<i  onClick={()=>setOpen(!open)} className="fa-solid fa-xmark grow-1 text-lg cursor-pointer"></i>)}
 
       <div className="flex flex-row gap-6 justify-between items-center p-1 text-[#cbcdda]">
      <Link to={'/'}> <i className="fa-solid fa-home text-lg"></i></Link>

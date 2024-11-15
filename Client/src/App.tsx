@@ -20,6 +20,7 @@ import LikedProducts from './components/Products/LikedProducts';
 import NotFound from './components/static/NotFound';
 import Cart from './components/Products/Cart';
 import SetCate from './components/Admin/category/SetCate';
+import DashComments from './components/Admin/DashBoard/DashComments';
 
 
 function App() {
@@ -77,6 +78,7 @@ console.log("API URL:", apiUrl);
     }
 
   }, [setWholeContainerClick])
+
   return (
     <BrowserRouter>
       <ToastContainer />
@@ -86,7 +88,6 @@ console.log("API URL:", apiUrl);
         <Route path="/" element={<Home />} />
         <Route path="/login" element={user?._id ? <Home /> : <Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/dashboard" element={<IsAuthUser requiredRole='Admin'>< OverView  /></IsAuthUser>} />
         {/* <Route path="/products" element={<IsAuthUser requiredRole='Admin'>< AddProduct  /></IsAuthUser>} /> */}
         <Route path="/editproducts" element={<IsAuthUser requiredRole='Admin'>< AddProduct  /></IsAuthUser>} />
         <Route path="/productsdetails" element={<IsAuthUser requiredRole='Admin'>< AllProducts  /></IsAuthUser>} />
@@ -96,6 +97,12 @@ console.log("API URL:", apiUrl);
         <Route path="/liked" element={<IsAuthUser requiredRole='user'>< LikedProducts  /></IsAuthUser>} />
         <Route path="/cart" element={<IsAuthUser requiredRole='user'>< Cart  /></IsAuthUser>} />
         <Route path="/set_category" element={<IsAuthUser requiredRole='Admin'>< SetCate  /></IsAuthUser>} />
+
+        <Route path="/dashboard"  >
+        <Route index  element={<IsAuthUser requiredRole='Admin'>< OverView  /></IsAuthUser>} />
+        <Route path="comments" element={< DashComments  />} />
+        </Route>
+
         <Route path='*' element={<NotFound/>}/>
       </Routes>
 

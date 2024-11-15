@@ -13,17 +13,10 @@ interface productType {
   inStock: string,
   category: string,
   description: string
-
 }
 
 const AddProduct = () => {
-
-
   const formRef =useRef<HTMLFormElement>(null)
-
-  // const picaInstance=new pica()
-
-  // picaInstance.resize()
 
   const {setError,user}=useAuthContext()
 
@@ -200,7 +193,7 @@ console.log('sssssssssssssssssss');
 const apiurl =import.meta.env.VITE_API_URL;
 
 try {
-  const response=await axios.post(`${apiurl}/api/auth/loaduser/addProduct`,formData,{withCredentials:true})
+  const response=await axios.post(`${apiurl}/api/product/addProduct`,formData,{withCredentials:true})
 
   console.log(response);
 } catch (error) {

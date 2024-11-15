@@ -21,8 +21,10 @@ const SideBar: React.FC<{ open: boolean, isAdmin?: boolean, setOpen: (open: bool
         _id: "",
         userName: "",
         email: "",
-        Role: ""
-      })
+        Role: "",
+        likes:[{product_id:''}],
+        Cart:[{product_id:""}]
+    })
       setError('')
       setSuccessMSG("Succesfully Logout ")
       setOpen(false)
@@ -53,7 +55,7 @@ const SideBar: React.FC<{ open: boolean, isAdmin?: boolean, setOpen: (open: bool
 
           <Link onClick={() => setOpen(false)} to={'/liked'}><li className='flex flex-row gap-5 items-center justify-start'> <i className='fa-solid fa-heart'></i>liked</li></Link>
 
-          <Link onClick={() => setOpen(false)} to={'#'}><li className='flex flex-row gap-5 items-center justify-start'><i className='fa-solid fa-cart-shopping'></i>Cart</li></Link>
+          <Link onClick={() => setOpen(false)} to={'/cart'}><li className='flex flex-row gap-5 items-center justify-start'><i className='fa-solid fa-cart-shopping'></i>Cart</li></Link>
 
           <Link onClick={() => setOpen(false)} to={'#'}><li className='flex flex-row gap-5 items-center justify-start'><i className='fa-solid fa-clock-rotate-left'></i> Recent</li></Link>
 

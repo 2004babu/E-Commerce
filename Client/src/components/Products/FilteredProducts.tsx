@@ -20,16 +20,17 @@ interface productType {
     imageUrl: string,
     Product_Name: string,
     P_Status: string,
-    Comments: [{userId:string,_id:string,comment:string,userName:string,likes:[{userId:string}]}],
-    Ratings: [{userId:string,_id:string,Rate:number}],
+    Comments: [{ userId: string, _id: string, comment: string, userName: string, likes: [{ userId: string }] }],
+    Ratings: [{ userId: string, _id: string, Rate: number }],
     likedBy: [{ userId: string, _id: string }],
-    totalRate:number,
+    totalRate: number,
 
 }
 
 const FilteredProducts = () => {
+    const [page, setPage] = useState<number>(0)
+    const [hasMore, setHaseMore] = useState<boolean>(true)
     const { setError, user } = useAuthContext()
-    // const { ProductDetails, setProductDetails } = useProductContext()
     const [loading, setLoading] = useState<boolean>(false)
 
     function useQuery() {
@@ -40,28 +41,30 @@ const FilteredProducts = () => {
     const [Product, setProduct] = useState<productType[]>([])
 
     useEffect(() => {
-        const fetchProduct = async () => {
-            const apiurl = import.meta.env.VITE_API_URL;
-            setLoading(true)
-            try {
-                const response = await axios.get(`${apiurl}/api/product/filter?category=${query.get('q')}`, { withCredentials: true })
-                console.log(response);
-
-                if (response.data.product) {
-                    setProduct(response.data.product)
-                }
-            } catch (error) {
-                console.log(error);
-                setError((error as Error).message)
-
-            } finally {
-                setLoading(false)
-            }
-        }
 
         fetchProduct()
     }, [])
 
+    const fetchProduct = async () => {
+        const apiurl = import.meta.env.VITE_API_URL;
+        setLoading(true)
+        try {
+            const response = await axios.get(`${apiurl}/api/product/filter/?category=${query.get('q')}&page=${page}`, { withCredentials: true })
+        if (response.data.product) {
+                setProduct((prev) => [...prev, ...response.data.product]);
+                setPage(page + 1)
+                setHaseMore(true)
+            } if (response.data.product.length < 10) {
+                setHaseMore(false)
+            }
+        } catch (error) {
+            console.log(error);
+            setError((error as Error).message)
+
+        } finally {
+            setLoading(false)
+        }
+    }
     const handleLike = async (e: React.MouseEvent<HTMLElement, MouseEvent>, productId: string) => {
         const targetClassList = e.currentTarget.classList;
         const apiurl = import.meta.env.VITE_API_URL;
@@ -119,7 +122,7 @@ const FilteredProducts = () => {
 
     return (
         <div className='w-screen h-screen p-2 '>
-            {Product.length > 0 && <ListProducts setProduct={setProduct}  Product={Product} />}
+            {Product.length > 0 && <ListProducts scrollFunc={fetchProduct} haseMore={hasMore} setProduct={setProduct} Product={Product} />}
         </div>
 
     )

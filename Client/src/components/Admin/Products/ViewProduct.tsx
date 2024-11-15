@@ -17,7 +17,7 @@ const ViewProduct = () => {
     const location = useLocation()
 
     // console.log();
-
+    
     const { setError, user, setUser } = useAuthContext()
     const { ProductDetails, setProductDetails } = useProductContext()
     const [isCart, setIsCart] = useState<boolean>(false)

@@ -1,6 +1,6 @@
 import React, { HTMLAttributes, useEffect, useRef, useState } from 'react'
-import HomeHeader from '../../HomeHeader'
-import SideBar from '../../static/SideBar'
+// import HomeHeader from '../../HomeHeader'
+// import SideBar from '../../static/SideBar'
 import { useNavigate } from 'react-router-dom'
 
 
@@ -61,7 +61,7 @@ if (HoverElement) {
 
         </div>
         {/* <div className='flex flex-row p-2 gap-3 flex  flex-wrap max-[465px]:justify-center '> */}
-          <div className='md:min-w-72 md:min-h-52 max-[465px]:w-[150px] max-[465px]:h-36 min-[465px]:w-[200px] min-[465px]:h-40 border-2 border-gray-500 rounded-lg p-3 text-balck flex flex-col justify-start '>
+          <div onClick={()=>navigate('/dashboard/comments')} className='md:min-w-72 md:min-h-52 max-[465px]:w-[150px] max-[465px]:h-36 min-[465px]:w-[200px] min-[465px]:h-40 border-2 border-gray-500 rounded-lg p-3 text-balck flex flex-col justify-start '>
             <div className='flex flex-row justify-between items-center'>
               <h2>New Comments</h2>
               <i className="fa-solid fa-angles-right"></i>
