@@ -40,7 +40,7 @@ useEffect(()=>{
 
       <div className="flex flex-row gap-6 justify-between items-center p-1 text-[#cbcdda]">
      <Link to={'/'}> <i className="fa-solid fa-home text-lg"></i></Link>
-     <Link to={'#'}> <i className="fa-solid fa-cart-shopping text-lg"></i></Link>
+     <Link to={'/cart'}> <i className="fa-solid fa-cart-shopping text-lg"></i></Link>
       <Link to={'/login'}>    
        <div>
         <i className="fa-solid fa-circle-user text-lg "></i>

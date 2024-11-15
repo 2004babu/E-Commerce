@@ -85,24 +85,26 @@ const DashComments = () => {
     }
 
     console.log(openFullDetails);
-    const angle = (95 / 100) * 360;
 
+    const ratingColor = ["red", "black", "red", "FFB22C", '399918']
+
+    console.log(ratingColor[1]);
 
 
     return (
         <div className='bg-gray-100 h-full w-full  mt-[65px] flex flex-row p-3 '>
-            <FilterHeader className='flex flex-row w-full p-1 justify-between items-center rounded-sm border-b-1 border-gray-300 shadow-md shadow-gray-300 bg-white p-2 ' >
+            <FilterHeader FilterName='Products' className=' flex flex-row w-full p-1 justify-between items-center rounded-sm border-b-1 border-gray-300 shadow-md shadow-gray-300 bg-white p-2 ' >
                 {/* view more Means Full Details Page Redirect */}
 
                 {Product && Product.length ? Product.map((item) =>
                     <div key={item._id} className='flex flex-col w-full  gap-2 mb-2 '>
 
-                        <h1 className='text-lg font-bold w-full flex p-2 bg-blue-100 justify-between '>
+                        <h1 onClick={(e) => {
+                            e.stopPropagation()
+                            toggleDetails(item._id)
+                        }} className='text-lg font-bold w-full flex p-2 bg-blue-100 justify-between cursor-pointer '>
                             {item.Product_Name}
-                            <span onClick={(e) => {
-                                e.stopPropagation()
-                                toggleDetails(item._id)
-                            }} className='text-sm font-normal w-14 text-center cursor-pointer'><i className={`fa-solid fa-chevron-${openFullDetails.find(value => value.id === item._id)?.isOpen ? "up" : "down"}`}></i></span>
+                            <span className='text-sm font-normal w-14 text-center cursor-pointer'><i className={`fa-solid fa-chevron-${openFullDetails.find(value => value.id === item._id)?.isOpen ? "up" : "down"}`}></i></span>
                         </h1>
 
                         {openFullDetails.find(value => value.id === item._id)?.isOpen &&
@@ -118,7 +120,7 @@ const DashComments = () => {
                                         <h1>Comments  </h1>
                                         <span>Total Cmt : {item.Comments.length}</span>
                                     </div>
-                                    <FilterHeader className='flex flex-row w-full  px-2 justify-between items-center rounded-sm border-none   p-2 text-sm font-normal h-6 bg-orange-300'>
+                                    <FilterHeader FilterName='CMT' className='flex flex-row w-full  px-2 justify-between items-center rounded-sm border-none   p-2 text-sm font-normal h-6 bg-orange-300'>
                                         {item.Comments && item.Comments.length ? item.Comments.map(cmt => <div className='flex flex-row justify-between items-center p-1 w-full'>
                                             <div className='font-normal text-sm'>{cmt.userName && cmt.userName} </div>
                                             <div>{cmt.comment && cmt.comment}</div>
@@ -136,10 +138,11 @@ const DashComments = () => {
 
                                     </div>
                                     <div style={{
-                                        background: `conic-gradient(#4CAF50 ${angle}deg, #E0E0E0 ${angle}deg)`,
-                                    }} className="flex rounded-full w-48 h-48 bg-red-900 justify-center items-center ">
+                                        background: `conic-gradient(#4CAF50 ${item.totalRate/5*360}deg, #E0E0E0 ${item.totalRate/5*360}deg)`,
+                                    }} className="flex rounded-full w-48 h-48  justify-center items-center ">
 
-                                        <div style={{}} className="flex rounded-full w-44 h-44 bg-white">
+                                        <div style={{}} className="flex justify-center items-center rounded-full w-44 h-44 bg-white">
+                                            {item.totalRate}
                                         </div>
                                     </div>
                                 </div>

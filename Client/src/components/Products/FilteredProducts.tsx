@@ -121,8 +121,8 @@ const FilteredProducts = () => {
 
 
     return (
-        <div className='w-screen h-screen p-2 '>
-            {Product.length > 0 && <ListProducts scrollFunc={fetchProduct} haseMore={hasMore} setProduct={setProduct} Product={Product} />}
+        <div id='filteredProducts' className='w-screen h-screen p-2 '>
+            {Product.length > 0 && <ListProducts  className="flex flex-row p-2  justify-start items-start gap-3 flex-wrap" scrollFunc={fetchProduct} haseMore={hasMore} setProduct={setProduct} Product={Product} />}
         </div>
 
     )

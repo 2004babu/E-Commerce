@@ -53,8 +53,8 @@ setError((error as Error).message)
 }
     }
   return (
-    <div className='w-screen h-screen p-2 '>
-{  Product.length>0&&  <ListProducts scrollFunc={fetchLikedProducts} haseMore={hasMore}  Product={Product} setProduct={setProduct} />}
+    <div id='likedproducts' className='w-full h-full p-2 mt-[65px] '>
+{  Product.length>0&&  <ListProducts  className="flex flex-row p-2  justify-start items-start gap-3 flex-wrap" scrollFunc={fetchLikedProducts} haseMore={hasMore}  Product={Product} setProduct={setProduct} />}
  </div>
   )
 }

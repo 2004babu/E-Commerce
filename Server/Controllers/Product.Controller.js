@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const ProductModel = require("../Models/Product.model.js");
 const { RESPONSE_SENDER } = require("../utils/RESPONSE_SENDER.js");
 const userModel = require("../Models/user.model.js");
+const categoryModel = require("../Models/category.model.js");
 // const {ObjectId}=require('mongoose').Types
 exports.addProduct = async (req, res, next) => {
   try {
@@ -749,8 +750,8 @@ exports.getAdminComments = async (req, res, next) => {
     const skip = page > 0 ? page * limit : 0;
 
     // console.log();
-    
-    if (!user_id ) {
+
+    if (!user_id) {
       return RESPONSE_SENDER(res, 401, {
         message: "userId Not Found error in Product controller ",
       });
@@ -781,14 +782,14 @@ exports.getAdminComments = async (req, res, next) => {
       // { $sort: { Ratings: -1 } },
       { $skip: skip },
       { $limit: limit },
-      // { 
-      //   $project: 
-        
+      // {
+      //   $project:
+
       //     {_id:0,
-      //       totalPrice:{$sum:["Price.MRP"*"Price.Offer"]},
+      //       TotalRate:{$multiply:[{$toDouble:"$Price.MRP"},{$toDouble:"$Price.Offer"}]},
       //       product:"$$ROOT"
       //     }
-        
+
       //  },
     ]);
 
@@ -801,22 +802,104 @@ exports.getAdminComments = async (req, res, next) => {
     });
   }
 };
-// exports.getProduct=async()=>{
-//     try {
+exports.getRecentView = async (req, res, next) => {
+  try {
+    const user_id = req.user._id;
 
-//     } catch (error) {
-//         console.log(error);
-// return RESPONSE_SENDER(res,401,{message:"error in Product controller ",error})
-//     }
-// }
-// exports.getProduct=async()=>{
-//     try {
+    const { page = 0 } = req.query;
+    const limit = 10;
+    const skip = page > 0 ? page * limit : 0;
+    if (!user_id) {
+      return RESPONSE_SENDER(res, 401, {
+        message: "userId Not Found error in Product controller ",
+      });
+    }
 
-//     } catch (error) {
-//         console.log(error);
-// return RESPONSE_SENDER(res,401,{message:"error in Product controller ",error})
-//     }
-// }
+    const viewedProducts = await ProductModel.aggregate([
+      {
+        $match: { "viewedBy.userId": new mongoose.Types.ObjectId(user_id) },
+      },
+      { $skip: skip },
+      { $limit: limit },
+
+      //  { $project:{
+      //     _id:1,
+      //     imageUrl:1,
+      //     Product_Name:1,
+      //     viewedBy:1
+      //   }}
+    ]);
+
+    // console.log(viewedProducts);
+    return RESPONSE_SENDER(res, 200, {
+      Count: viewedProducts.length,
+      product: viewedProducts,
+    });
+  } catch (error) {
+    console.log(error);
+    return RESPONSE_SENDER(res, 401, {
+      message: "error in Product controller ",
+      error,
+    });
+  }
+};
+
+exports.getRelatedProducts = async (req,res,next) => {
+  try {
+    const user_id = req.user._id;
+
+    const { page = 0 } = req.query;
+    const limit = 10;
+    const skip = page > 0 ? page * limit : 0;
+    if (!user_id) {
+      return RESPONSE_SENDER(res, 401, {
+        message: "userId Not Found error in Product controller ",
+      });
+    }
+    
+    
+    
+    const filterEnnum=  [
+      "Electronics",
+      "Computers",
+      "Wearables",
+      "Accessories",
+      "Health",
+      "Footwear",
+      "Kitchen",
+      "Gaming Laptop",
+      "Dress",
+      "Mobile",
+      "Gadgets",
+      "Food",
+      "Toys",
+      "Camara",
+    ]
+    
+    const product=await ProductModel.aggregate([
+      {$match:{category :{$in:filterEnnum}}},
+      {$sample:{size:limit}}
+    ])
+    
+    
+    if (!product) {
+      return RESPONSE_SENDER(res, 401, {
+        message: "userId Not Found error in Product controller ",
+      });
+    }
+    
+    
+    return RESPONSE_SENDER(res, 200, { count:product.length,product
+    });
+
+  } catch (error) {
+    console.log(error);
+    return RESPONSE_SENDER(res, 401, {
+      message: "error in Product controller ",
+      error,
+    });
+  }
+};
 
 // exports.getProduct=async()=>{
 //     try {

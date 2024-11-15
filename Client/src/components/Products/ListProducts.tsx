@@ -3,7 +3,7 @@ import { useAuthContext } from '../../Context/authContextPrivider';
 import axios from 'axios';
 import Loading from '../static/Loading';
 import StartRating from 'react-star-ratings'
-import {  useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 interface productType {
     _id: string,
@@ -23,9 +23,10 @@ interface productType {
     likedBy: [{ userId: string, _id: string }],
     totalRate: number,
 
+
 }
 
-const ListProducts: React.FC<{ Product: productType[], setProduct?: (Dispatch<SetStateAction<productType[]>>), scrollFunc: () => void; haseMore: boolean }> = ({ Product, setProduct, scrollFunc, haseMore }) => {
+const ListProducts: React.FC<{ Product: productType[], setProduct?: (Dispatch<SetStateAction<productType[]>>), scrollFunc: () => void; haseMore: boolean ,className:string,parentEl?:string}> = ({parentEl,className, Product, setProduct, scrollFunc, haseMore }) => {
 
 
     const navigate = useNavigate()
@@ -166,14 +167,14 @@ const ListProducts: React.FC<{ Product: productType[], setProduct?: (Dispatch<Se
     return (
         // <div >
         <>
-            <div className='bg-gray-100 h-14 w-full items-center justify-end   mt-[65px] flex flex-row p-3 '>
+            {/* <div className='bg-gray-100 h-14 w-full items-center justify-end   mt-[65px] flex flex-row p-3 '>
                 filter fuctions like assending desending order a-z z-a highPrice -lowPrice
 
                 <div onClick={handleFilter} className="flex flex-row gap-1 p-2 justify-center items-center cursor-pointer select-none ">
                     filter <i className={`fa fa-solid fa-caret-${isFilter ? "down" : "up"}`}></i>
                 </div>
-            </div>
-            {isFilter ? <div className='flex flex-row p-2 items-center justify-start '>
+            </div> */}
+            {/* {isFilter ? <div className='flex flex-row p-2 items-center justify-start '>
                 <div onClick={(e) => {
                     e.stopPropagation();
                     setIsFirstToLast(!isFirstToLast)
@@ -189,7 +190,7 @@ const ListProducts: React.FC<{ Product: productType[], setProduct?: (Dispatch<Se
                         </h2>
                         <i className='fa-solid fa-arrow-down'></i>
                     </>}
-                </div>
+                </div> */}
 
                 {/* 
                 A-Z function will be Add
@@ -207,12 +208,13 @@ const ListProducts: React.FC<{ Product: productType[], setProduct?: (Dispatch<Se
                     </>}
                 </div> */}
 
-            </div> : null}
+            {/* </div> : null} */}
 
-            <InfiniteScroll className="flex flex-row p-2  justify-start items-start gap-3 flex-wrap"
+            <InfiniteScroll className={className}
                 dataLength={filteredProduct.length}
                 next={scrollFunc}
                 hasMore={haseMore}
+                scrollableTarget={parentEl ? parentEl :""}
                 loader={<div className="border border-blue-300 shadow rounded-md h-full p-4 max-w-sm w-full mx-auto">
                     <div className="animate-pulse flex space-x-4">
                         <div className="rounded-full bg-slate-700 h-20 w-10"></div>
@@ -235,7 +237,7 @@ const ListProducts: React.FC<{ Product: productType[], setProduct?: (Dispatch<Se
                 {filteredProduct && filteredProduct.length > 0 ? filteredProduct.map((item, index) => (
                     <div onClick={(e) => handleOpen(e, item._id)} key={index} className="flex flex-col p-1 gap-1 justify-center items-start relative ">
                         <div className="w-10 h-10 px-2 py-1 text-md absolute top-0 right-0">
-                            {(item?.likedBy.length && item?.likedBy?.some(value => value?.userId.toString() === user._id.toString())) ?
+                            {(item?.likedBy && item?.likedBy?.some(value => value?.userId.toString() === user._id.toString())) ?
                                 (<i onClick={(e) => handleLike(e, item._id)} className='fa-solid fa-heart text-red-500'></i>)
                                 :
                                 (<i onClick={(e) => handleLike(e, item._id)} className='fa-regular fa-heart'></i>)
@@ -243,7 +245,7 @@ const ListProducts: React.FC<{ Product: productType[], setProduct?: (Dispatch<Se
                             <i onClick={(e) => handleShare(e, item._id)} className='fa-solid fa-share'></i>
                         </div>
                         <div key={index} className='h-60 max-[465px]:h-48 max-[465px]:w-40 w-56 '>
-                            <img src={item.imageUrl[0]} alt={` ${item.Product_Name} category photo`} className='h-60 max-[465px]:h-48 max-[465px]:w-40 w-56 max-[465px]:object-contain object-contain' />
+                            <img src={item?.imageUrl?.length ?item.imageUrl[0] :"./image.png"} alt={` ${item.Product_Name} category photo`} className='h-60 max-[465px]:h-48 max-[465px]:w-40 w-56 max-[465px]:object-contain object-contain' />
                         </div>
                         <h1 className='font-bold text-lg'>{item.Product_Name}</h1>
                         <div className="flex flex-row p-1 text-md">
