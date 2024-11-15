@@ -2,10 +2,10 @@ import React, { ReactNode, useState } from 'react'
 
 interface typeFilterHeader {
     children: ReactNode,
-    className:string
+    className: string
 }
 
-const FilterHeader: React.FC<typeFilterHeader> = ({ children,className }) => {
+const FilterHeader: React.FC<typeFilterHeader> = ({ children, className }) => {
 
     const [FilterOpen, setFilterOpen] = useState<boolean>(false)
 
@@ -16,16 +16,17 @@ const FilterHeader: React.FC<typeFilterHeader> = ({ children,className }) => {
                 <div className="flex ">
                     Product Name
                 </div>
-                <div  className="flex flex-row justify-between items-center gap-3 flex-row-reverse select-none">
-                    <i onClick={(e) => { 
+                <div className="flex flex-row justify-between items-center gap-3 flex-row-reverse select-none">
+                    <i onClick={(e) => {
                         e.stopPropagation()
-                        setFilterOpen(!FilterOpen)}} className='fa-solid fa-bars cursor-pointer'></i>
-                        {FilterOpen &&
-                            <span>
-                                 Newest -Oldest
-                            </span>
-                            
-                            }
+                        setFilterOpen(!FilterOpen)
+                    }} className='fa-solid fa-bars cursor-pointer'></i>
+                    {FilterOpen &&
+                        <span>
+                            Newest -Oldest
+                        </span>
+
+                    }
                 </div>
 
             </div>
