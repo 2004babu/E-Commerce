@@ -3,7 +3,7 @@ module.exports=async(req,res,next)=>{
 try {
     
     const {_id:userId}=req.user
-    console.log(req?.user?.Role);
+    console.log("user Role",req?.user?.Role);
     
     if (!userId ||req.user.Role!=='Admin') {
         return RESPONSE_SENDER(res,401,{message:"error in isAdmin "},{message:'your Not Authorized Person do Access Admin access '})   

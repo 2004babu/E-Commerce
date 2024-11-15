@@ -126,6 +126,11 @@ exports.filterProduct = async (req, res, next) => {
 
     // const {id}=req.params
     // console.log(id);
+    const { page = 0 } = req.query;
+    const limit = 10;
+    const skip = page > 0 ? page * limit : 0;
+
+    console.log(skip, limit, page);
 
     const {
       search = "",
@@ -231,12 +236,14 @@ exports.filterProduct = async (req, res, next) => {
     if (category) {
       const product = await ProductModel.find({
         category: { $regex: category, $options: "i" },
-      });
+      })
+        .skip(skip)
+        .limit(limit);
 
       return RESPONSE_SENDER(
         res,
         200,
-        { product },
+        { product, count: product.length },
         { message: "Product filtered SuccessFully " }
       );
     }
@@ -254,6 +261,10 @@ exports.filterProduct = async (req, res, next) => {
 exports.likedProduct = async (req, res, next) => {
   try {
     const user_id = req.user._id;
+    const { page = 0 } = req.query;
+    const limit = 10;
+    const skip = page > 0 ? page * limit : 0;
+
     const { id } = req.params;
     if (id && mongoose.isValidObjectId(id)) {
       let user = await userModel.findById(user_id);
@@ -262,7 +273,9 @@ exports.likedProduct = async (req, res, next) => {
 
       const filteredID = user.likes.map((item) => item.product_id);
 
-      let likeProduct = await ProductModel.find({ _id: { $in: filteredID } });
+      let likeProduct = await ProductModel.find({ _id: { $in: filteredID } })
+        .skip(skip)
+        .limit(limit);
 
       if (!user || !likeProduct) {
         return RESPONSE_SENDER(
@@ -276,7 +289,7 @@ exports.likedProduct = async (req, res, next) => {
       return RESPONSE_SENDER(
         res,
         200,
-        { product: likeProduct, user },
+        { count: likeProduct.length, product: likeProduct, user },
         { message: "liked SuccessFully " }
       );
     }
@@ -581,7 +594,7 @@ exports.cartProduct = async (req, res, next) => {
     return RESPONSE_SENDER(
       res,
       200,
-      { user  },
+      { user },
       { message: "Product Create SuccessFully " }
     );
   } catch (error) {
@@ -597,7 +610,6 @@ exports.cartProduct = async (req, res, next) => {
 exports.getCartProduct = async (req, res, next) => {
   try {
     const user_id = req.user._id;
-
 
     if (!user_id) {
       return RESPONSE_SENDER(
@@ -618,32 +630,32 @@ exports.getCartProduct = async (req, res, next) => {
         { message: " Product Not Found " }
       );
     }
-if (!user.Cart.length>0) {
-  return RESPONSE_SENDER(
-    res,
-    200,
-    { user,message: "there is No cart here "  },
-    { message: "there is No cart here " }
-  );
-}
-const filteredid=user.Cart.map(ids=>ids.product_id)
+    if (!user.Cart.length > 0) {
+      return RESPONSE_SENDER(
+        res,
+        200,
+        { user, message: "there is No cart here " },
+        { message: "there is No cart here " }
+      );
+    }
+    const filteredid = user.Cart.map((ids) => ids.product_id);
 
-const product=await ProductModel.find({_id:{$in:filteredid}})
-console.log(product);
+    const product = await ProductModel.find({ _id: { $in: filteredid } });
+    console.log(product);
 
-if (!product) {
-  return RESPONSE_SENDER(
-    res,
-    200,
-    { user,message: "there is No cart here "  },
-    { message: "there is No cart here " }
-  );
-}
+    if (!product) {
+      return RESPONSE_SENDER(
+        res,
+        200,
+        { user, message: "there is No cart here " },
+        { message: "there is No cart here " }
+      );
+    }
 
     return RESPONSE_SENDER(
       res,
       200,
-      { user ,product},
+      { user, product },
       { message: "cart get  SuccessFully " }
     );
   } catch (error) {
@@ -656,6 +668,7 @@ if (!product) {
     );
   }
 };
+
 // exports.dislikeComment = async (req, res, next) => {
 //   try {
 //     const user_id = req.user._id;
@@ -727,14 +740,67 @@ if (!product) {
 //   }
 // };
 
-// exports.getProduct=async()=>{
-//     try {
+exports.getAdminComments = async (req, res, next) => {
+  try {
+    const user_id = req.user._id;
 
-//     } catch (error) {
-//         console.log(error);
-// return RESPONSE_SENDER(res,401,{message:"error in Product controller ",error})
-//     }
-// }
+    const { page = 0 } = req.query;
+    const limit = 10;
+    const skip = page > 0 ? page * limit : 0;
+
+    // console.log();
+    
+    if (!user_id ) {
+      return RESPONSE_SENDER(res, 401, {
+        message: "userId Not Found error in Product controller ",
+      });
+    }
+    // if (!page | !pageNO | (pageNO !== Number(page))) {
+    //   return RESPONSE_SENDER(res, 401, {
+    //     message: " page not correct or not Found Product controller",
+    //   });
+    // }
+
+    const user = await userModel.findById(user_id);
+    // const Product=await ProductModel.find({Owner:user_id}).skip(skip).limit(limit)
+
+    const Product = await ProductModel.aggregate([
+      {
+        $match: {
+          Owner: user_id.toString(),
+          $expr: { $gte: [{ $size: "$Comments" }, 1] },
+        },
+      },
+      // {
+      //   $group: {
+      //     _id: "$_id",
+      //     Comments: { $last: "$Comments" },
+      //     Ratings: { $first: "$Ratings" },
+      //   },
+      // },
+      // { $sort: { Ratings: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      // { 
+      //   $project: 
+        
+      //     {_id:0,
+      //       totalPrice:{$sum:["Price.MRP"*"Price.Offer"]},
+      //       product:"$$ROOT"
+      //     }
+        
+      //  },
+    ]);
+
+    RESPONSE_SENDER(res, 200, { count: Product.length, Product });
+  } catch (error) {
+    console.log(error);
+    return RESPONSE_SENDER(res, 401, {
+      message: "error in Product controller ",
+      error,
+    });
+  }
+};
 // exports.getProduct=async()=>{
 //     try {
 
@@ -908,7 +974,7 @@ if (!product) {
 
 // exports.gatCartProducts =async(erq,res,next)=>{
 //   try {
-    
+
 //   } catch (error) {
 //     console.log(error);
 //     return RESPONSE_SENDER(
