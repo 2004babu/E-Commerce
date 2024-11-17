@@ -1,30 +1,12 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react'
+import  { createContext, ReactNode, useContext, useState } from 'react'
 
 
-interface productType {
-    _id: string,
-    search: string,
-    Price: {
-        MRP: string,
-        Offer: string
-    },
-    inStock: string,
-    category: string,
-    description: string,
-    imageUrl: string,
-    Product_Name: string,
-    P_Status: string,
-    Comments: [{userId:string,_id:string,comment:string,userName:string,likes:[{userId:string}]}],
-    Ratings: [{userId:string,_id:string,Rate:number}],
-    likedBy: [{ userId: string, _id: string }],
-    totalRate:number,
+import { productType } from '../components/utils/Types'; 
 
-}
 interface productContextType {
     ProductDetails: productType,
-    error?: string,
     setProductDetails: (productDetails: productType) => (void);
-    setError?: (error: string) => (void);
+    
 }
 
 const context = createContext<productContextType | null>(null);

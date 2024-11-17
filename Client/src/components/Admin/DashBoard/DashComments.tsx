@@ -4,26 +4,9 @@ import axios from 'axios'
 import FilterHeader from '../../static/FilterHeader'
 import { Link } from 'react-router-dom'
 
+import { productType } from '../../utils/Types' 
 
-interface productType {
-    _id: string,
-    search: string,
-    Price: {
-        MRP: string,
-        Offer: string
-    },
-    inStock: string,
-    category: string,
-    description: string,
-    imageUrl: string,
-    Product_Name: string,
-    P_Status: string,
-    Comments: [{ userId: string, _id: string, comment: string, userName: string, likes: [{ userId: string }] }],
-    Ratings: [{ userId: string, _id: string, Rate: number }],
-    likedBy: [{ userId: string, _id: string }],
-    totalRate: number,
 
-}
 
 const DashComments = () => {
 

@@ -1,33 +1,46 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, { Dispatch, ElementRef, ForwardedRef, ReactNode, Ref, RefObject, SetStateAction, useEffect, useState } from 'react'
 import { useAuthContext } from '../../Context/authContextPrivider';
 import axios from 'axios';
 import Loading from '../static/Loading';
 import StartRating from 'react-star-ratings'
 import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
-interface productType {
-    _id: string,
-    search: string,
-    Price: {
-        MRP: string,
-        Offer: string
-    },
-    inStock: string,
-    category: string,
-    description: string,
-    imageUrl: string,
-    Product_Name: string,
-    P_Status: string,
-    Comments: [{ userId: string, _id: string, comment: string, userName: string, likes: [{ userId: string }] }],
-    Ratings: [{ userId: string, _id: string, Rate: number }],
-    likedBy: [{ userId: string, _id: string }],
-    totalRate: number,
+
+import { productType } from '../utils/Types'; 
 
 
+interface listType {
+    Product: productType[],
+    setProduct?: (Dispatch<SetStateAction<productType[]>>),
+    scrollFunc: () => void;
+    haseMore: boolean,
+    className: string,
+    parentEl?: string,
+    refer?: ReactNode,
+    likeShare?: boolean,
+    Rating?: boolean,
+    children?: React.ReactNode
+    endMSG?: React.ReactNode
 }
 
-const ListProducts: React.FC<{ Product: productType[], setProduct?: (Dispatch<SetStateAction<productType[]>>), scrollFunc: () => void; haseMore: boolean ,className:string,parentEl?:string}> = ({parentEl,className, Product, setProduct, scrollFunc, haseMore }) => {
 
+
+
+const ListProducts: React.FC<listType> = ({ refer, parentEl, className, Product, setProduct, scrollFunc, haseMore, likeShare = true, Rating = true, children, endMSG }) => {
+
+    // const [isFirstToLast, setIsFirstToLast] = useState<boolean>(true)
+    // const [isAToZ, setIsAToZ] = useState<boolean | undefined>(undefined)
+    // useEffect(() => {
+
+    //     if (!isFirstToLast && Product.length > 0) {
+
+    //         setFilteredProduct([...Product.slice().reverse()])
+    //     } else {
+    //         setFilteredProduct([...Product])
+
+    //     }
+
+    // }, [isFirstToLast])
 
     const navigate = useNavigate()
     const { setError, user } = useAuthContext()
@@ -35,8 +48,6 @@ const ListProducts: React.FC<{ Product: productType[], setProduct?: (Dispatch<Se
     const [loading, setLoading] = useState<boolean>(false)
 
     const [isFilter, setIsFilter] = useState<boolean>(false)
-    const [isFirstToLast, setIsFirstToLast] = useState<boolean>(true)
-    // const [isAToZ, setIsAToZ] = useState<boolean | undefined>(undefined)
     const [filteredProduct, setFilteredProduct] = useState<productType[]>([])
 
     const apiurl = import.meta.env.VITE_API_URL;
@@ -63,7 +74,6 @@ const ListProducts: React.FC<{ Product: productType[], setProduct?: (Dispatch<Se
             );
             console.log(response);
             if (response.data.product) {
-                // setProduct(response.data.product);
             }
         } catch (error) {
             console.log(error);
@@ -152,29 +162,82 @@ const ListProducts: React.FC<{ Product: productType[], setProduct?: (Dispatch<Se
         e.stopPropagation()
         setIsFilter(!isFilter)
     }
-    useEffect(() => {
 
-        if (!isFirstToLast && Product.length > 0) {
-
-            setFilteredProduct([...Product.slice().reverse()])
-        } else {
-            setFilteredProduct([...Product])
-
-        }
-
-    }, [isFirstToLast])
 
     return (
-        // <div >
-        <>
-            {/* <div className='bg-gray-100 h-14 w-full items-center justify-end   mt-[65px] flex flex-row p-3 '>
+        <>    <InfiniteScroll className={className}
+            dataLength={filteredProduct.length}
+            next={scrollFunc}
+            hasMore={haseMore}
+            scrollableTarget={refer ? refer : parentEl}
+
+            loader={<h1>loading</h1>}
+            endMessage={endMSG ?? <div>no value</div>}
+
+        >
+
+
+            {filteredProduct && filteredProduct.length > 0 ? filteredProduct.map((item, index) => (
+                <div onClick={(e) => handleOpen(e, item._id)} key={index} className="flex flex-col p-1 gap-1 justify-center items-start relative ">
+                    {(likeShare) && <div className="w-10 h-10 px-2 py-1 text-md absolute top-0 right-0">
+                        {(item?.likedBy && item?.likedBy?.some(value => value?.userId.toString() === user._id.toString())) ?
+                            (<i onClick={(e) => handleLike(e, item._id)} className='fa-solid fa-heart text-red-500'></i>)
+                            :
+                            (<i onClick={(e) => handleLike(e, item._id)} className='fa-regular fa-heart'></i>)
+                        }
+                        <i onClick={(e) => handleShare(e, item._id)} className='fa-solid fa-share'></i>
+                    </div>}
+                    <div key={index} className='h-60 max-[465px]:h-48 max-[465px]:w-40 w-56 '>
+                        <img src={item?.imageUrl?.length ? item.imageUrl[0] : "./image.png"} alt={` ${item.Product_Name} category photo`} className='h-60 max-[465px]:h-48 max-[465px]:w-40 w-56 max-[465px]:object-contain object-contain' />
+                    </div>
+                    <h1 className='font-bold text-lg'>{item.Product_Name}</h1>
+                    <div className="flex flex-row p-1 text-md">
+                        <span>{item.Price.MRP}</span>
+                        <span>{item.Price.Offer}</span>
+                    </div>
+                    {Rating && <>
+
+                        <div className="bg-[#388e3c] font-bold text-sm rounded-sm text-white flex flex-row gap-1 px-[10px] py-[5px] justify-center items-center w-fit">
+
+                            {item.totalRate} <i className='fa-solid fa-star'></i>
+                        </div>
+                        <div onClick={(e) => {
+                            e.stopPropagation()
+                        }} className="ratings  flex flex-col">
+                            <span className='text-sm text-gray-300'>{item.Ratings?.length ? item.Ratings.length : 0}  votes</span>
+
+                            <StartRating
+                                ignoreInlineStyles={false}
+                                starDimension='16px'
+                                starSpacing='0px'
+                                rating={item?.totalRate && item?.Ratings?.length ? item.totalRate / item.Ratings.length : 0}
+                                starRatedColor='yellow'
+                                numberOfStars={5}
+                                changeRating={(newrating) => handleRating(item._id, newrating)}
+                                name='rating'
+                            />
+                        </div>
+                    </>
+                    }
+                    {children}
+                </div>
+            )) : !loading ? <h1>not Found</h1> : <Loading />}
+        </InfiniteScroll>
+
+        </>
+    )
+}
+
+export default ListProducts
+
+{/* <div className='bg-gray-100 h-14 w-full items-center justify-end   mt-[65px] flex flex-row p-3 '>
                 filter fuctions like assending desending order a-z z-a highPrice -lowPrice
 
                 <div onClick={handleFilter} className="flex flex-row gap-1 p-2 justify-center items-center cursor-pointer select-none ">
                     filter <i className={`fa fa-solid fa-caret-${isFilter ? "down" : "up"}`}></i>
                 </div>
             </div> */}
-            {/* {isFilter ? <div className='flex flex-row p-2 items-center justify-start '>
+{/* {isFilter ? <div className='flex flex-row p-2 items-center justify-start '>
                 <div onClick={(e) => {
                     e.stopPropagation();
                     setIsFirstToLast(!isFirstToLast)
@@ -192,7 +255,7 @@ const ListProducts: React.FC<{ Product: productType[], setProduct?: (Dispatch<Se
                     </>}
                 </div> */}
 
-                {/* 
+{/* 
                 A-Z function will be Add
                 <div className='cursor-pointer flex gap-2 flex-row px-2 py-1 border-2 border-gray-300 items-center '>
                 {isFirstToLast ? <>
@@ -208,75 +271,4 @@ const ListProducts: React.FC<{ Product: productType[], setProduct?: (Dispatch<Se
                     </>}
                 </div> */}
 
-            {/* </div> : null} */}
-
-            <InfiniteScroll className={className}
-                dataLength={filteredProduct.length}
-                next={scrollFunc}
-                hasMore={haseMore}
-                scrollableTarget={parentEl ? parentEl :""}
-                loader={<div className="border border-blue-300 shadow rounded-md h-full p-4 max-w-sm w-full mx-auto">
-                    <div className="animate-pulse flex space-x-4">
-                        <div className="rounded-full bg-slate-700 h-20 w-10"></div>
-                        <div className="flex-1 space-y-6 py-1">
-                            <div className="h-48 bg-slate-700 rounded"></div>
-                            <div className="space-y-3">
-                                <div className="grid grid-cols-3 gap-4">
-                                    <div className="h-2 bg-slate-700 rounded col-span-2"></div>
-                                    <div className="h-2 bg-slate-700 rounded col-span-1"></div>
-                                </div>
-                                <div className="h-2 bg-slate-700 rounded"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>}
-                endMessage={<p>End of feed</p>}
-            >
-
-
-                {filteredProduct && filteredProduct.length > 0 ? filteredProduct.map((item, index) => (
-                    <div onClick={(e) => handleOpen(e, item._id)} key={index} className="flex flex-col p-1 gap-1 justify-center items-start relative ">
-                        <div className="w-10 h-10 px-2 py-1 text-md absolute top-0 right-0">
-                            {(item?.likedBy && item?.likedBy?.some(value => value?.userId.toString() === user._id.toString())) ?
-                                (<i onClick={(e) => handleLike(e, item._id)} className='fa-solid fa-heart text-red-500'></i>)
-                                :
-                                (<i onClick={(e) => handleLike(e, item._id)} className='fa-regular fa-heart'></i>)
-                            }
-                            <i onClick={(e) => handleShare(e, item._id)} className='fa-solid fa-share'></i>
-                        </div>
-                        <div key={index} className='h-60 max-[465px]:h-48 max-[465px]:w-40 w-56 '>
-                            <img src={item?.imageUrl?.length ?item.imageUrl[0] :"./image.png"} alt={` ${item.Product_Name} category photo`} className='h-60 max-[465px]:h-48 max-[465px]:w-40 w-56 max-[465px]:object-contain object-contain' />
-                        </div>
-                        <h1 className='font-bold text-lg'>{item.Product_Name}</h1>
-                        <div className="flex flex-row p-1 text-md">
-                            <span>{item.Price.MRP}</span>
-                            <span>{item.Price.Offer}</span>
-                        </div>
-                        <div className="bg-[#388e3c] font-bold text-sm rounded-sm text-white flex flex-row gap-1 px-[10px] py-[5px] justify-center items-center w-fit">
-
-                            {item.totalRate} <i className='fa-solid fa-star'></i>
-                        </div>
-                        <div className="ratings  flex flex-col">
-                            <span className='text-sm text-gray-300'>{item.Ratings?.length ? item.Ratings.length : 0}  votes</span>
-
-                            <StartRating
-                                ignoreInlineStyles={false}
-                                starDimension='16px'
-                                starSpacing='0px'
-                                rating={item?.totalRate && item?.Ratings?.length ? item.totalRate / item.Ratings.length : 0}
-                                starRatedColor='yellow'
-                                numberOfStars={5}
-                                changeRating={(newrating) => handleRating(item._id, newrating)}
-                                name='rating'
-                            />
-                        </div>
-                    </div>
-                )) : !loading ? <h1>not Found</h1> : <Loading />}
-            </InfiniteScroll>
-
-        </>
-        // </div>
-    )
-}
-
-export default ListProducts
+{/* </div> : null} */ }

@@ -1,30 +1,20 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ListProducts from './ListProducts'
-// import { useProductContext } from '../../Context/ProductContext'
 import axios from 'axios'
 import { useAuthContext } from '../../Context/authContextPrivider'
+import RelatableProducts from '../Admin/Products/RelatableProducts'
+import Recent_Products from '../Admin/Products/Recent_Products'
+import { redirect, useNavigate } from 'react-router-dom'
+// import InfiniteScroll from 'react-infinite-scroller'
 
-interface productType {
-  _id: string,
-  search: string,
-  Price: {
-    MRP: string,
-    Offer: string
-  },
-  inStock: string,
-  category: string,
-  description: string,
-  imageUrl: string,
-  Product_Name: string,
-  P_Status: string,
-  Comments: [{ userId: string, _id: string, comment: string, userName: string, likes: [{ userId: string }] }],
-  Ratings: [{ userId: string, _id: string, Rate: number }],
-  likedBy: [{ userId: string, _id: string }],
-  totalRate: number,
+import { productType } from '../utils/Types'
 
-}
 const Cart = () => {
+
+
+  const navigate=useNavigate()
   const [hasMore, setHaseMore] = useState<boolean>(true)
+  const [cartPage, setCartPage] = useState<number>(0)
 
   const [page, setPage] = useState<number>(0)
   const [ViewhasMore, setViewHaseMore] = useState<boolean>(true)
@@ -46,12 +36,12 @@ const Cart = () => {
   const fetchCart = async () => {
     try {
 
-      const response = await axios.get(`${apiurl}/api/product/cart`, { withCredentials: true })
+      const response = await axios.get(`${apiurl}/api/product/cart/?page=${cartPage}`, { withCredentials: true })
 
 
       if (response.data.product) {
         setProduct((prev) => [...prev, ...response.data.product]);
-        // setPage(page + 1)
+        setCartPage(page + 1)
         setHaseMore(true)
       } if (response.data.product.length < 10) {
         setHaseMore(false)
@@ -68,12 +58,11 @@ const Cart = () => {
     try {
 
       const response = await axios.get(`${apiurl}/api/product/getRecentView/?page=${page}`, { withCredentials: true })
-
-
       if (response.data.product) {
         setViewProduct((prev) => [...prev, ...response.data.product]);
         setPage(page + 1)
-        setViewHaseMore(true)
+        // scroll element not work while using this row side so no fetch need secound time
+        setViewHaseMore(false)
       } if (response?.data?.product?.length < 10) {
         setViewHaseMore(false)
       }
@@ -109,19 +98,18 @@ const Cart = () => {
 
   const fetchRelatedProduct = async () => {
     const apiurl = import.meta.env.VITE_API_URL;
-    // setLoading(true)
-    console.log('rrrrrrrrrrr');
-    
     try {
       const response = await axios.get(`${apiurl}/api/product/getRelatedProducts/?page=${Relatedpage}`, { withCredentials: true })
       console.log(response.data.product);
-      
+
       if (response.data.product) {
         setRelatedProduct((prev) => [...prev, ...response.data.product]);
-        setRelatedpage(page + 1)
+        setRelatedpage(Relatedpage + 1)
+        // scroll element not work while using this row side so no fetch need secound time
+
         setRelatedHaseMore(false)
-      } 
-      if (response?.data?.product?.length < 10) {
+      }
+      if (response?.data?.product?.length < 4) {
         setRelatedHaseMore(false)
       }
     } catch (error) {
@@ -133,36 +121,50 @@ const Cart = () => {
     }
   }
 
-  console.log(RelatedhasMore,Relatedpage);
+  const handleViewAll = async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+
+    console.dir(e);
+
+  }
+
+  //this one For endof The listProducts
+  const listEndMSG: React.ReactNode = <div onClick={handleViewAll} className=' w-48 h-[300px] flex  justify-center items-center '>
+    <div className='bg-gray-400 p-3 rounded-full flex  justify-center items-center gap-3'>
+      <i className='fa-solid fa-arrow-right'></i>
+      view all
+    </div>
+  </div>
+  //this one For cart end msg to viewmore Products
+  const cartEndMSG: React.ReactNode = <div onClick={()=>navigate('/',{state:{msg:"from cart"}})} className='ms-3 select-none cursor-pointer w-fit h-[300px] flex  justify-center items-center '>
+    <div className='bg-gray-400 p-3 rounded-full flex  justify-center items-center gap-3'>
+      <i className='fa-solid fa-arrow-right'></i>
+      view all
+    </div>
+  </div>
 
 
   return (
-    <div id='cartHead'  className='flex flex-col w-full h-full p-2 relative overflow-y-scroll overflow-x-hidden mt-[65px] '>
+    <div id='cartHead' className='flex flex-col w-full h-full p-2 relative overflow-y-scroll overflow-x-hidden mt-[65px] '>
 
-      {Product && Product.length ? <ListProducts  className="flex flex-row p-2  justify-start items-start gap-3 flex-wrap" scrollFunc={fetchCart} haseMore={hasMore} Product={Product} setProduct={setProduct} /> :
+      {Product && Product.length ?
+        <ListProducts
+          className="flex flex-row p-2  justify-start items-start gap-3 flex-wrap"
+          scrollFunc={fetchCart}
+          haseMore={hasMore}
+          Product={Product}
+          setProduct={setProduct}
+          endMSG={cartEndMSG}
+          Rating={true}
+        /> :
         <div className="flex flex-col w-full p-3 font-bold text-xl h-80">
           Your Cart Is Empty
         </div>
       }
 
-      <div id='Related_Products' className="flex flex-row overflow-x-scroll overflow-y-hidden hide-side-bar   p-2 w-full h-full border-t-2 border-gray-300 relative flex-nowrap mt-[100px]">
-        <h1 className='absolute top-3 left-5 z-10 font-bold text-lg'>Related Products</h1>
-        {RelatedProduct && RelatedProduct.length ? <ListProducts parentEl='Related_Products' className="flex flex-row p-2  justify-start items-start gap-3 mt-[65px]" scrollFunc={fetchRelatedProduct} haseMore={RelatedhasMore} Product={RelatedProduct} setProduct={setRelatedProduct} /> :
-          <div className="flex flex-col w-full p-3 font-bold text-xl h-80">
-            random fetch will be Add
-          </div>
-        }
-      </div>
-      <div id='Recent_Products' className="flex flex-row overflow-x-scroll overflow-y-hidden hide-side-bar   p-2 w-full h-full border-t-2 border-gray-300 relative flex-nowrap mt-[100px]">
-        <h1 className='absolute top-3 left-5 z-10 font-bold text-lg'>Recent Products</h1>
-        {ViewProduct && ViewProduct.length ? <ListProducts  className="flex flex-row p-2  justify-start items-start gap-3 mt-[65px]" scrollFunc={fetchRecentView} haseMore={ViewhasMore} Product={ViewProduct} setProduct={setViewProduct} /> :
-          <div className="flex flex-col w-full p-3 font-bold text-xl h-80">
-            random fetch will be Add
-          </div>
-        }
-      </div>
+      <RelatableProducts endMSG={listEndMSG} setRelatedProduct={setRelatedProduct} RelatedhasMore={RelatedhasMore} fetchRelatedProduct={fetchRelatedProduct} RelatedProduct={RelatedProduct} />
 
-
+      <Recent_Products endMSG={listEndMSG} RecentProduct={ViewProduct} setRecentProduct={setViewProduct} RecenthasMore={ViewhasMore} fetchRecentProduct={fetchRecentView} />
     </div>
   )
 }

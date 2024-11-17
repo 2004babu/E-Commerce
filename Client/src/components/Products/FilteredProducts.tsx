@@ -2,30 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useAuthContext } from '../../Context/authContextPrivider';
 import axios from 'axios';
-import { useProductContext } from '../../Context/ProductContext';
-import Loading from '../static/Loading';
 import ListProducts from './ListProducts';
 
 
-interface productType {
-    _id: string,
-    search: string,
-    Price: {
-        MRP: string,
-        Offer: string
-    },
-    inStock: string,
-    category: string,
-    description: string,
-    imageUrl: string,
-    Product_Name: string,
-    P_Status: string,
-    Comments: [{ userId: string, _id: string, comment: string, userName: string, likes: [{ userId: string }] }],
-    Ratings: [{ userId: string, _id: string, Rate: number }],
-    likedBy: [{ userId: string, _id: string }],
-    totalRate: number,
+import { productType } from '../utils/Types'; 
 
-}
 
 const FilteredProducts = () => {
     const [page, setPage] = useState<number>(0)

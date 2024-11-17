@@ -3,25 +3,9 @@ import ListProducts from './ListProducts'
 import { useAuthContext } from '../../Context/authContextPrivider'
 import axios from 'axios'
 
-interface productType {
-    _id: string,
-    search: string,
-    Price: {
-        MRP: string,
-        Offer: string
-    },
-    inStock: string,
-    category: string,
-    description: string,
-    imageUrl: string,
-    Product_Name: string,
-    P_Status: string,
-    Comments: [{userId:string,_id:string,comment:string,userName:string,likes:[{userId:string}]}],
-    Ratings: [{userId:string,_id:string,Rate:number}],
-    likedBy: [{ userId: string, _id: string }],
-    totalRate:number,
+import { productType } from '../utils/Types' 
 
-}   
+  
 const LikedProducts = () => {
     const [page,setPage]=useState<number>(0)
     const [hasMore,setHaseMore]=useState<boolean>(true)

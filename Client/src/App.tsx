@@ -93,7 +93,7 @@ console.log("API URL:", apiUrl);
         <Route path="/productsdetails" element={<IsAuthUser requiredRole='Admin'>< AllProducts  /></IsAuthUser>} />
         <Route path="/addproducts" element={<IsAuthUser requiredRole='Admin'>< AddProduct  /></IsAuthUser>} />
         <Route path="/product" element={<IsAuthUser requiredRole='Admin'>< ViewProduct  /></IsAuthUser>} />
-        <Route path="/product/category" element={<IsAuthUser requiredRole='Admin'>< FilteredProducts  /></IsAuthUser>} />
+        <Route path="/product/category" element={<IsAuthUser requiredRole='user'>< FilteredProducts  /></IsAuthUser>} />
         <Route path="/liked" element={<IsAuthUser requiredRole='user'>< LikedProducts  /></IsAuthUser>} />
         <Route path="/cart" element={<IsAuthUser requiredRole='user'>< Cart  /></IsAuthUser>} />
         <Route path="/set_category" element={<IsAuthUser requiredRole='Admin'>< SetCate  /></IsAuthUser>} />

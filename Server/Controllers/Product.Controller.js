@@ -609,7 +609,13 @@ exports.cartProduct = async (req, res, next) => {
   }
 };
 exports.getCartProduct = async (req, res, next) => {
+
   try {
+
+    const { page = 0 } = req.query;
+    const limit = 10;
+    const skip = page > 0 ? page * limit : 0;
+
     const user_id = req.user._id;
 
     if (!user_id) {
@@ -641,8 +647,8 @@ exports.getCartProduct = async (req, res, next) => {
     }
     const filteredid = user.Cart.map((ids) => ids.product_id);
 
-    const product = await ProductModel.find({ _id: { $in: filteredid } });
-    console.log(product);
+    const product = await ProductModel.find({ _id: { $in: filteredid } }).skip(skip).limit(limit);
+    // console.log(product);
 
     if (!product) {
       return RESPONSE_SENDER(
@@ -656,7 +662,7 @@ exports.getCartProduct = async (req, res, next) => {
     return RESPONSE_SENDER(
       res,
       200,
-      { user, product },
+      {Count:product.length, user, product, },
       { message: "cart get  SuccessFully " }
     );
   } catch (error) {
@@ -849,7 +855,7 @@ exports.getRelatedProducts = async (req,res,next) => {
     const user_id = req.user._id;
 
     const { page = 0 } = req.query;
-    const limit = 10;
+    const limit = 20;
     const skip = page > 0 ? page * limit : 0;
     if (!user_id) {
       return RESPONSE_SENDER(res, 401, {

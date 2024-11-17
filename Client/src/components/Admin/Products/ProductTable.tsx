@@ -3,6 +3,8 @@ import { useAuthContext } from '../../../Context/authContextPrivider';
 import axios from 'axios';
 import { Navigate, redirect, useNavigate } from 'react-router-dom';
 
+
+
 interface Row {
   id: number;
   title: string;
@@ -10,18 +12,8 @@ interface Row {
   group: string;
 }
 
-interface productType {
-  Product_Name: string,
-  _id: string,
-  Price: {
-    MRP: string,
-    Offer: string
-  }
-  inStock: string,
-  category: string,
-  description: string
+import { productType } from '../../utils/Types'; 
 
-}
 
 const ProductTable = () => {
 

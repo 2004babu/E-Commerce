@@ -21,7 +21,7 @@ const image=multer({storage})
 router.get("/p/:id",isAuthendicatedUser,isAdmin,getSingleProduct);
 router.post("/addProduct",isAuthendicatedUser,isAdmin,image.array('Product_Image[]',10),addProduct);
 router.get("/allproduct",isAuthendicatedUser,isAdmin,AllProducts);
-router.get("/filter",isAuthendicatedUser,isAdmin,filterProduct);
+router.get("/filter",isAuthendicatedUser,filterProduct);
 router.get("/liked/:id",isAuthendicatedUser,likedProduct);
 router.patch("/rating",isAuthendicatedUser,rateProduct);
 router.post("/comment",isAuthendicatedUser,addComment);
