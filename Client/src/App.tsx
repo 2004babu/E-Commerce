@@ -21,6 +21,7 @@ import NotFound from './components/static/NotFound';
 import Cart from './components/Products/Cart';
 import SetCate from './components/Admin/category/SetCate';
 import DashComments from './components/Admin/DashBoard/DashComments';
+import Editable_Product from './components/Admin/Products/Editable_Product';
 
 
 function App() {
@@ -89,11 +90,17 @@ console.log("API URL:", apiUrl);
         <Route path="/login" element={user?._id ? <Home /> : <Login />} />
         <Route path="/signup" element={<SignUp />} />
         {/* <Route path="/products" element={<IsAuthUser requiredRole='Admin'>< AddProduct  /></IsAuthUser>} /> */}
-        <Route path="/editproducts" element={<IsAuthUser requiredRole='Admin'>< AddProduct  /></IsAuthUser>} />
+
+<Route path='editProducts'>
+<Route index element={<IsAuthUser requiredRole='Admin'>< AllProducts Re_path='/editProducts/edit/?id='  /></IsAuthUser>} />
+<Route path="edit" element={<IsAuthUser requiredRole='Admin'>< Editable_Product  /></IsAuthUser>} />
+
+</Route>
+
         <Route path="/productsdetails" element={<IsAuthUser requiredRole='Admin'>< AllProducts  /></IsAuthUser>} />
         <Route path="/addproducts" element={<IsAuthUser requiredRole='Admin'>< AddProduct  /></IsAuthUser>} />
         <Route path="/product" element={<IsAuthUser requiredRole='Admin'>< ViewProduct  /></IsAuthUser>} />
-        <Route path="/product/category" element={<IsAuthUser requiredRole='user'>< FilteredProducts  /></IsAuthUser>} />
+        <Route path="/product/category" element={< FilteredProducts  />} />
         <Route path="/liked" element={<IsAuthUser requiredRole='user'>< LikedProducts  /></IsAuthUser>} />
         <Route path="/cart" element={<IsAuthUser requiredRole='user'>< Cart  /></IsAuthUser>} />
         <Route path="/set_category" element={<IsAuthUser requiredRole='Admin'>< SetCate  /></IsAuthUser>} />

@@ -15,7 +15,7 @@ interface Row {
 import { productType } from '../../utils/Types'; 
 
 
-const ProductTable = () => {
+const ProductTable:React.FC<{Re_path?:string}> = ({Re_path}) => {
 
   const { setError } = useAuthContext()
 
@@ -91,7 +91,7 @@ const handleOpenProduct=async(id:string)=>{
   if (id) {
   console.log(id);
 
-  navigate('/product?id='+id,{state:{from:location.href.replace(location.origin,'')}});
+  navigate(Re_path+id,{state:{from:location.href.replace(location.origin,'')}});
 
 }
 

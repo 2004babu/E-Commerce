@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation, useParams, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useAuthContext } from '../../Context/authContextPrivider';
 import axios from 'axios';
 import ListProducts from './ListProducts';
@@ -9,6 +9,7 @@ import { productType } from '../utils/Types';
 
 
 const FilteredProducts = () => {
+    const navigate=useNavigate()
     const [page, setPage] = useState<number>(0)
     const [hasMore, setHaseMore] = useState<boolean>(true)
     const { setError, user } = useAuthContext()
@@ -99,11 +100,17 @@ const FilteredProducts = () => {
         }
     }
 
+    const filterEndMSG:React.ReactNode=<div onClick={()=>navigate('/',{state:{msg:"from filter "}})} className='ms-3 select-none cursor-pointer w-fit h-[300px] flex  justify-center items-center '>
+    <div className='bg-gray-400 p-3 rounded-full flex  justify-center items-center gap-3'>
+      <i className='fa-solid fa-arrow-right'></i>
+      view all
+    </div>
+  </div>
 
 
     return (
         <div id='filteredProducts' className='w-screen h-screen p-2 '>
-            {Product.length > 0 && <ListProducts  className="flex flex-row p-2  justify-start items-start gap-3 flex-wrap" scrollFunc={fetchProduct} haseMore={hasMore} setProduct={setProduct} Product={Product} />}
+            {Product.length > 0 && <ListProducts  Rating={false} endMSG={filterEndMSG} className="flex flex-row p-2 mt-[65px]  justify-start items-start gap-3 flex-wrap" scrollFunc={fetchProduct} haseMore={hasMore} setProduct={setProduct} Product={Product} />}
         </div>
 
     )

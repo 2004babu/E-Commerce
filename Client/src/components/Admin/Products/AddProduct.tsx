@@ -16,9 +16,9 @@ interface productType {
 }
 
 const AddProduct = () => {
-  const formRef =useRef<HTMLFormElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
 
-  const {setError,user}=useAuthContext()
+  const { setError, user } = useAuthContext()
 
   const [ProductDetails, setProductDetails] = useState<productType>({
     Product_Name: "",
@@ -26,7 +26,7 @@ const AddProduct = () => {
     Offer: "",
     inStock: "",
     category: "",
-    description:"",
+    description: "",
 
   })
   const catogeryEnnum = [
@@ -53,14 +53,14 @@ const AddProduct = () => {
 
   const onDrop = useCallback((file: any[]) => {
 
-if (file&&file.length>10&& Array.isArray(file)) {
-  setError('your Upload over the limit it wil automatically delete over the limit !! limit is 10')
-  file=file.slice(0,10)
-}
-console.log(file);
+    if (file && file.length > 10 && Array.isArray(file)) {
+      setError('your Upload over the limit it wil automatically delete over the limit !! limit is 10')
+      file = file.slice(0, 10)
+    }
+    console.log(file);
 
-  setAllImages(file)
-    
+    setAllImages(file)
+
     const readfilePromise = file.map(item => {
       return new Promise<string | ArrayBuffer | null | undefined>((resolve, reject) => {
         const fileReader = new FileReader()
@@ -93,118 +93,118 @@ console.log(file);
 
   // console.log(typeof allBlobFile[0]);
 
-const handlePictureNLess=()=>{
-  if (PictureN>0) {
-    setPictureN(PictureN-1)
-  }else{
-    setPictureN((allBlobFile?.length||0)-1)
+  const handlePictureNLess = () => {
+    if (PictureN > 0) {
+      setPictureN(PictureN - 1)
+    } else {
+      setPictureN((allBlobFile?.length || 0) - 1)
+    }
   }
-}
-const handlePictureNPlus=()=>{
-  
-  if (PictureN<(allBlobFile?.length||0)-1) {
-    setPictureN(PictureN+1)
-  }else{
-    setPictureN(0)
+  const handlePictureNPlus = () => {
+
+    if (PictureN < (allBlobFile?.length || 0) - 1) {
+      setPictureN(PictureN + 1)
+    } else {
+      setPictureN(0)
+    }
   }
-}
 
-//setProduct Details
+  //setProduct Details
 
-const changeHandler=async(e:React.ChangeEvent<HTMLInputElement>)=>{
+  const changeHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
-  setProductDetails({...ProductDetails,[e.target.name]:e.target.value});
-}
-const selectHandler=async(e:React.ChangeEvent<HTMLSelectElement>)=>{
-  setProductDetails({...ProductDetails,[e.target.name]:e.target.value});
-}
-
-
-///removePic 
-const removePic=async()=>{
-  if (allBlobFile &&allBlobFile?.length>1) {
- const newAllBlop=   allBlobFile?.filter((item,index)=>{
-   return index!==PictureN
-    })
-    setAllBlopFile(newAllBlop);
+    setProductDetails({ ...ProductDetails, [e.target.name]: e.target.value });
   }
-}
+  const selectHandler = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setProductDetails({ ...ProductDetails, [e.target.name]: e.target.value });
+  }
 
 
-//remove All pic
-
-const removeAllPic=()=>{
-  if (allBlobFile &&allBlobFile?.length>0) {
-       setAllBlopFile([]);
-     }
-}
-
-
-console.log(allImages);
-
+  ///removePic 
+  const removePic = async () => {
+    if (allBlobFile && allBlobFile?.length > 1) {
+      const newAllBlop = allBlobFile?.filter((item, index) => {
+        return index !== PictureN
+      })
+      setAllBlopFile(newAllBlop);
+    }
+  }
 
 
-///submit handler 
-const submitHandler=async(e:React.FormEvent<HTMLFormElement>)=>{
-e.preventDefault()
-console.log('enter');
+  //remove All pic
+
+  const removeAllPic = () => {
+    if (allBlobFile && allBlobFile?.length > 0) {
+      setAllBlopFile([]);
+    }
+  }
 
 
-const isAllString=Object.values(ProductDetails).filter(item=>typeof item==='string')
-
-if (!isAllString) {
-  return setError('fill string values')
-}
-
-const formData =new FormData()
-formData.append('Product_Name',ProductDetails.Product_Name)
-formData.append('MRP',ProductDetails.MRP)
-formData.append('Offer',ProductDetails.Offer)
-formData.append('inStock',ProductDetails.inStock)
-formData.append('description',ProductDetails.description)
-formData.append('category',ProductDetails.category)
-
-const isValidImage = Array.isArray(allImages)
-
-
-
-console.log(isValidImage);
-
-
-if (isValidImage&& allImages.length>1) {
-  
-  allImages.forEach(item=>
-    formData.append('Product_Image[]',item)
-  )
-
-}else if(isValidImage && allImages.length===1){
-  formData.append('Product_Image[]',allImages[0])
-}else{
-  console.log('add images');
   console.log(allImages);
-  
-  
-  return setError('add Images ')
-
-}
 
 
-console.log('sssssssssssssssssss');
-const apiurl =import.meta.env.VITE_API_URL;
 
-try {
-  const response=await axios.post(`${apiurl}/api/product/addProduct`,formData,{withCredentials:true})
+  ///submit handler 
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    console.log('enter');
 
-  console.log(response);
-} catch (error) {
-  console.log(error);
-  setError((error as Error).message)
-  
-}
-}
-console.log(ProductDetails);
 
-// console.log();
+    const isAllString = Object.values(ProductDetails).filter(item => typeof item === 'string')
+
+    if (!isAllString) {
+      return setError('fill string values')
+    }
+
+    const formData = new FormData()
+    formData.append('Product_Name', ProductDetails.Product_Name)
+    formData.append('MRP', ProductDetails.MRP)
+    formData.append('Offer', ProductDetails.Offer)
+    formData.append('inStock', ProductDetails.inStock)
+    formData.append('description', ProductDetails.description)
+    formData.append('category', ProductDetails.category)
+
+    const isValidImage = Array.isArray(allImages)
+
+
+
+    console.log(isValidImage);
+
+
+    if (isValidImage && allImages.length > 1) {
+
+      allImages.forEach(item =>
+        formData.append('Product_Image[]', item)
+      )
+
+    } else if (isValidImage && allImages.length === 1) {
+      formData.append('Product_Image[]', allImages[0])
+    } else {
+      console.log('add images');
+      console.log(allImages);
+
+
+      return setError('add Images ')
+
+    }
+
+
+    console.log('sssssssssssssssssss');
+    const apiurl = import.meta.env.VITE_API_URL;
+
+    try {
+      const response = await axios.post(`${apiurl}/api/product/addProduct`, formData, { withCredentials: true })
+
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+      setError((error as Error).message)
+
+    }
+  }
+  console.log(ProductDetails);
+
+  // console.log();
 
 
   return (
@@ -212,7 +212,7 @@ console.log(ProductDetails);
       <h1>Products</h1>
       <div className='flex flex-row max-[700px]:flex-col p-2 gap-3  '>
         <div className=" flex flex-col  p-2 justify-start items-center min-h-fit grow flex-nowrap  border-2 border-gray-300 ">
-          <div  className="flex flex-col justify-start p-2 grow items-start  rounded-2 relative overflow-hidden w-full ">
+          <div className="flex flex-col justify-start p-2 grow items-start  rounded-2 relative overflow-hidden w-full ">
             <h1>Products Images </h1>
             <div className='flex flex-row justify-between items-center p-0 w-full '>
               {allBlobFile && allBlobFile.length > 1 ? <>
@@ -221,30 +221,30 @@ console.log(ProductDetails);
                 <i onClick={handlePictureNPlus} className="fa-solid fa-chevron-right text-lg z-20 hover:bg-gray-200 px-2 py-1  top-50 -right-0"></i>
               </>
 
-                : <> 
-                 {/* <i className="fa-solid fa-chevron-left text-lg hover:bg-gray-200 px-2 py-1"></i> */}
+                : <>
+                  {/* <i className="fa-solid fa-chevron-left text-lg hover:bg-gray-200 px-2 py-1"></i> */}
                   <img src={allBlobFile && typeof allBlobFile[0] === 'string' ? allBlobFile[0] : "./image.png"} className='max-h-[400px] max-w-[500px] min-[1000px]:w-[700px] max-[465px]:w-full  rounded-lg object-contain ' alt="" />
                   {/* <i className="fa-solid fa-chevron-right text-lg hover:bg-gray-200 px-2 py-1"></i> */}
-                  </>}
+                </>}
             </div>
-            <div {...getRootProps()}  className=' w-full rounded-lg bg-gray-300  h-16  flex items-center  mt-2 justify-center'>
-              <input {...getInputProps()}   />
+            <div {...getRootProps()} className=' w-full rounded-lg bg-gray-300  h-16  flex items-center  mt-2 justify-center'>
+              <input {...getInputProps()} />
               <p > select more Files </p>
-            {isDragActive ? (
+              {isDragActive ? (
 
-              <div className="absolute w-full rounded-lg  h-full top-0 bg-gray-300 flex items-center justify-center opacity-75 text-gray-700 font-bold">
-                Drop here
-              </div>
-            ) : null}
+                <div className="absolute w-full rounded-lg  h-full top-0 bg-gray-300 flex items-center justify-center opacity-75 text-gray-700 font-bold">
+                  Drop here
+                </div>
+              ) : null}
 
             </div>
             <div className="w-full items-center flex justify-center">
 
-            <div className="flex flex-row gap-2 justify-between p-2">
-              <button form={"formRef"} type='submit' className='bg-blue-300 rounded-md outline-none border-none px-3 py-2 '> Submit All </button>
-              <button className='bg-blue-300 rounded-md outline-none border-none px-3 py-2 ' onClick={removeAllPic}>Remove All </button>
-              <button className='bg-blue-300 rounded-md outline-none border-none px-3 py-2'  onClick={removePic}>Remove this </button>
-            </div>
+              <div className="flex flex-row gap-2 justify-between p-2">
+                <button form={"formRef"} type='submit' className='bg-blue-300 rounded-md outline-none border-none px-3 py-2 '> Submit All </button>
+                <button className='bg-blue-300 rounded-md outline-none border-none px-3 py-2 ' onClick={removeAllPic}>Remove All </button>
+                <button className='bg-blue-300 rounded-md outline-none border-none px-3 py-2' onClick={removePic}>Remove this </button>
+              </div>
             </div>
           </div>
         </div>
@@ -257,7 +257,7 @@ console.log(ProductDetails);
             </div>
             <div className='flex flex-col  h-fit  '>
               <label htmlFor="MRP">MRPrice</label>
-              <input  onChange={changeHandler} type="number" className='rounded-md px-3 py-2 mt-2' name="MRP" id="MRP" />
+              <input onChange={changeHandler} type="number" className='rounded-md px-3 py-2 mt-2' name="MRP" id="MRP" />
             </div>
             <div className='flex flex-col  h-fit   '>
               <label htmlFor="Offer">Offer</label>
@@ -273,7 +273,7 @@ console.log(ProductDetails);
             <div className='flex flex-col  h-fit  '>
 
               <label htmlFor="category">category</label>
-              <select onChange={selectHandler}  name="category" className='rounded-md px-3 py-2 mt-2' id="category"  >
+              <select onChange={selectHandler} name="category" className='rounded-md px-3 py-2 mt-2' id="category"  >
                 {catogeryEnnum.map((item, index) => (
                   <option key={index} value={item}>{item}</option>))
                 }

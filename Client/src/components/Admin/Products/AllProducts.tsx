@@ -16,7 +16,7 @@ interface productType {
 
 }
 
-const AllProducts = () => {
+const AllProducts:React.FC<{Re_path?:string}> = ({Re_path='/product?id='}) => {
 
     const { setError } = useAuthContext()
 
@@ -118,7 +118,7 @@ const AllProducts = () => {
 
 
             </form>
-            <ProductTable />
+            <ProductTable Re_path={Re_path} />
         </div>
     )
 }

@@ -2,7 +2,6 @@
 //productType
 export interface productType {
     _id: string,
-    search: string,
     Price: {
       MRP: string,
       Offer: string

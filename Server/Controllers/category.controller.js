@@ -1,7 +1,7 @@
 const categoryModel = require("../Models/category.model");
 const { RESPONSE_SENDER } = require("../utils/RESPONSE_SENDER");
 
-exports.getCategoryImages = async (req, res, next) => {
+exports.getCategoryImages = async (req, res, next) => {  
   try {
     const limit = 3;
 

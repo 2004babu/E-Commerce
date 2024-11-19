@@ -6,7 +6,7 @@ import StartRating from 'react-star-ratings'
 import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import { productType } from '../utils/Types'; 
+import { productType } from '../utils/Types';
 
 
 interface listType {
@@ -190,17 +190,24 @@ const ListProducts: React.FC<listType> = ({ refer, parentEl, className, Product,
                     <div key={index} className='h-60 max-[465px]:h-48 max-[465px]:w-40 w-56 '>
                         <img src={item?.imageUrl?.length ? item.imageUrl[0] : "./image.png"} alt={` ${item.Product_Name} category photo`} className='h-60 max-[465px]:h-48 max-[465px]:w-40 w-56 max-[465px]:object-contain object-contain' />
                     </div>
-                    <h1 className='font-bold text-lg'>{item.Product_Name}</h1>
-                    <div className="flex flex-row p-1 text-md">
-                        <span>{item.Price.MRP}</span>
-                        <span>{item.Price.Offer}</span>
-                    </div>
-                    {Rating && <>
+                    <h1 className='font-bold text-lg'>{item.Product_Name.substring(0,15)}</h1>
+                    <div className="flex flex-col items-start justify-center gap-1 p-1 text-md">
+                        <span className='font-bold text-lg' >{"₹" + Number(item.Price.MRP) * Number(item.Price.Offer) / 100}</span>
+                        <div className='flex flex-row gap-2'>
+                            <span className=' font-semibold  line-through text-sm text-gray-600 flex'>{"₹" + Number(item.Price.MRP)} </span>
+                            <p className='ms-5 text-sm font-medium  text-green-600'>{"%  " + item.Price.Offer + "  off"}</p>
 
-                        <div className="bg-[#388e3c] font-bold text-sm rounded-sm text-white flex flex-row gap-1 px-[10px] py-[5px] justify-center items-center w-fit">
-
-                            {item.totalRate} <i className='fa-solid fa-star'></i>
                         </div>
+                    </div>
+                    
+                       <div className="flex flex-row p-1 gap-2">
+                       <div className="bg-[#388e3c] font-bold text-sm rounded-sm text-white flex flex-row gap-1 px-[4px] py-[2px] justify-center items-center w-fit">
+                            {item.totalRate.toFixed(1)} <i className='fa-solid fa-star text-sm'></i> 
+                            
+                        </div>
+                       <span className='text-sm font-medium text-gray-600'>{item.Ratings.length} reviews</span>
+                       </div>
+                        {Rating &&
                         <div onClick={(e) => {
                             e.stopPropagation()
                         }} className="ratings  flex flex-col">
@@ -217,8 +224,8 @@ const ListProducts: React.FC<listType> = ({ refer, parentEl, className, Product,
                                 name='rating'
                             />
                         </div>
-                    </>
                     }
+                   
                     {children}
                 </div>
             )) : !loading ? <h1>not Found</h1> : <Loading />}

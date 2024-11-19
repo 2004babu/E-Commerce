@@ -17,10 +17,12 @@ const ViewProduct = () => {
     const location = useLocation()
 
     // console.log();
-    
+
     const { setError, user, setUser } = useAuthContext()
     const { ProductDetails, setProductDetails } = useProductContext()
     const [isCart, setIsCart] = useState<boolean>(false)
+    const [ImageN, setImageN] = useState<number>(0)
+
 
 
     useEffect(() => {
@@ -47,7 +49,7 @@ const ViewProduct = () => {
 
 
 
-    console.log(ProductDetails);
+    // console.log(ProductDetails);
     const handleShare = async () => {
 
         if (navigator) {
@@ -179,9 +181,9 @@ const ViewProduct = () => {
 
             const response = await axios.post(`${apiurl}/api/product/cart`, { productId }, { withCredentials: true })
 
-           
-            if(response.data.user) setUser(response.data.user)
-            if(response.data.product) setProductDetails(response.data.product)
+
+            if (response.data.user) setUser(response.data.user)
+            if (response.data.product) setProductDetails(response.data.product)
 
         } catch (error) {
             console.log(error);
@@ -191,20 +193,34 @@ const ViewProduct = () => {
         }
 
     }
-    console.log(user);
+    // console.log(user);
 
 
     useEffect(() => {
         if (ProductDetails?._id && user.Cart.length > 0) {
             let cart = user.Cart.some(item => item.product_id.toString() === ProductDetails._id.toString())
-             setIsCart(user.Cart.some(item => item.product_id.toString() === ProductDetails._id.toString()))
+            setIsCart(user.Cart.some(item => item.product_id.toString() === ProductDetails._id.toString()))
 
             console.log(cart);
 
-        }else{
+        } else {
             setIsCart(false)
         }
     }, [ProductDetails, user])
+
+    const handleImageRight = () => {
+        if (ProductDetails?.imageUrl?.length > 1 && ImageN < ProductDetails?.imageUrl?.length - 1) {
+            setImageN(ImageN + 1)
+            console.log(ProductDetails.imageUrl[ImageN], ImageN);
+
+        }
+
+    }
+    const handleImageLeft = () => {
+        if (ImageN > 0) {
+            setImageN(ImageN - 1)
+        }
+    }
 
 
     return (
@@ -219,15 +235,24 @@ const ViewProduct = () => {
                             <i className='fa-solid fa-share'></i><span>Share</span>
                         </div>
                     </div>
-                    <div className="flex flex-row p-2 px-4 justify-between items-center gap-1">
-                        <i className='fa-solid fa-chevron-left w-10 bg-gray-200   px-1 py-3  flex justify-center items-center '></i>
+                    {ProductDetails.imageUrl.length > 1 ?
+                        <div className="flex flex-row p-2 px-4 justify-between items-center gap-1 select-none ">
+                            <i onClick={handleImageLeft} className='fa-solid fa-chevron-left w-10 bg-gray-200   px-1 py-3  flex justify-center items-center '></i>
 
-                        <div className="img w-80 bg-gray-900 h-96 min-[750px]:h-full">
-                            <img src={ProductDetails.imageUrl} alt="product image" className='h-96 w-80 object-cover min-[750px]:h-full  ' />
-                        </div>
+                                    <div className="img w-80 bg-gray-900 h-96 min-[750px]:h-full">
+                                        <img src={ProductDetails.imageUrl[ImageN] ?? "./image.png"} alt="product image" className='h-96 w-80 object-cover min-[750px]:h-full  ' />
+                                    </div>
 
-                        <i className='fa-solid fa-chevron-right w-10 bg-gray-200   px-1 py-3  flex justify-center items-center '></i>
-                    </div>
+                            <i onClick={handleImageRight} className='fa-solid fa-chevron-right w-10 bg-gray-200   px-1 py-3  flex justify-center items-center '></i>
+                        </div> : <div className="flex flex-row p-2 px-4 justify-between items-center gap-1 select-none  ">
+                            {/* <i onClick={handleImageLeft} className='fa-solid fa-chevron-left w-10 bg-gray-200   px-1 py-3  flex justify-center items-center '></i> */}
+
+                            <div className="img w-80 bg-gray-900 h-96 min-[750px]:h-full">
+                                <img src={ProductDetails.imageUrl[0] ?? "./image.png"} alt="product image" className='h-96 w-80 object-cover min-[750px]:h-full  ' />
+                            </div>
+
+                            {/* <i onClick={handleImageRight} className='fa-solid fa-chevron-right w-10 bg-gray-200   px-1 py-3  flex justify-center items-center '></i> */}
+                        </div>}
                 </div>
                 <div className="flex flex-col gap-4 mt-2 p-4 min-[750px]:mt-[65px] min-[750px]:overflow-x-hidden hide-side-bar  min-[750px]:overflow-none">
                     <h1 className='text-2xl font-bold'>
@@ -245,9 +270,9 @@ const ViewProduct = () => {
                         <p className='text-pretty text-sm w-full' style={{ wordWrap: "break-word" }}>{ProductDetails.description}</p>
                     </div>
                     <div className='flex flex-row gap-2 justify-evenly items-center w-full'>
-                        {!isCart ? 
-                        <button onClick={() => handleCart(ProductDetails._id)} type="button" className="h-12 text-center bg-blue-400 rounded-md w-fit  px-3 py-2">Add Cart </button> :
-                         <button onClick={() => handleCart(ProductDetails._id)} type="button" className="h-12 text-center bg-blue-400 rounded-md w-fit  px-3 py-2">Remove Cart </button>}
+                        {!isCart ?
+                            <button onClick={() => handleCart(ProductDetails._id)} type="button" className="h-12 text-center bg-blue-400 rounded-md w-fit  px-3 py-2">Add Cart </button> :
+                            <button onClick={() => handleCart(ProductDetails._id)} type="button" className="h-12 text-center bg-blue-400 rounded-md w-fit  px-3 py-2">Remove Cart </button>}
                         <button type="button" className="h-12  text-center bg-yellow-400 rounded-md w-fit px-3 py-2 ">Buy Now</button>
                     </div>
                     <CommentList CommentSubmit={CommentSubmit} handleThumpUp={handleThumpUp} handleThumpDown={handleThumpDown} clearCMTInput={clear} />
