@@ -122,11 +122,6 @@ exports.getSingleProduct = async (req, res, next) => {
 exports.filterProduct = async (req, res, next) => {
   try {
     const user_id = req.user._id;
-
-    // console.log(req.query);
-
-    // const {id}=req.params
-    // console.log(id);
     const { page = 0 } = req.query;
     const limit = 10;
     const skip = page > 0 ? page * limit : 0;
@@ -236,7 +231,7 @@ exports.filterProduct = async (req, res, next) => {
 
     if (category) {
       const product = await ProductModel.find({
-        category: { $regex: category, $options: "i" },
+        $or:[{category: { $regex: category, $options: "i" }},{Product_Name: { $regex: search, $options: "i" }},{description: { $regex: search, $options: "i" }}]
       })
         .skip(skip)
         .limit(limit);
@@ -907,14 +902,43 @@ exports.getRelatedProducts = async (req,res,next) => {
   }
 };
 
-// exports.getProduct=async()=>{
-//     try {
+exports.editProducts = async (req, res, next) => {
+  try {
+    console.log('Incoming Request Query:', req.query);
+    const { Product_Name, MRP, Offer, inStock, category, description, P_Status, Product_Image } = req.body;
 
-//     } catch (error) {
-//         console.log(error);
-// return RESPONSE_SENDER(res,401,{message:"error in Product controller ",error})
-//     }
-// }
+    if (!req.query?.id) {
+      return RESPONSE_SENDER(res, 400, { message: "Product ID is required in the query." });
+    }
+
+    const updateFields = {};
+    if (Product_Name) updateFields.Product_Name = Product_Name;
+    if (MRP || Offer) updateFields.Price = { MRP, Offer };
+    if (inStock !== undefined) updateFields.inStock = inStock;
+    if (category) updateFields.category = category;
+    if (description) updateFields.description = description;
+    if (P_Status) updateFields.P_Status = P_Status;
+    if (Product_Image) updateFields.imageUrl = Product_Image;
+
+    console.log('Fields to Update:', updateFields);
+
+    const product = await ProductModel.findByIdAndUpdate(
+     req.query?.id,
+     {$set:updateFields},
+     {new:true,runValidators:true}
+    );
+
+    if (!product) {
+      return RESPONSE_SENDER(res, 404, { message: "Product not found with the given ID." });
+    }
+
+    return RESPONSE_SENDER(res, 200, { message: "Product updated successfully", product });
+  } catch (error) {
+    console.error('Error in editProducts:', error);
+    return RESPONSE_SENDER(res, 500, { message: "Error in Product controller", error });
+  }
+};
+
 // exports.getProduct=async()=>{
 //     try {
 

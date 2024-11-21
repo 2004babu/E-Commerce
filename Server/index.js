@@ -14,7 +14,7 @@ const categoryRoute =require('./Routers/category.route.js')
 const connectMongo = require('./utils/db.js')
 
 app.use(cors({origin:'http://localhost:5173',credentials:true,methods:["POST",'GET','PATCH','DELETE']}))
-app.use(express.json())
+app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}))
 

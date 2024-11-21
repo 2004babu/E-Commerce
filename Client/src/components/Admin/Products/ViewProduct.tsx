@@ -239,9 +239,9 @@ const ViewProduct = () => {
                         <div className="flex flex-row p-2 px-4 justify-between items-center gap-1 select-none ">
                             <i onClick={handleImageLeft} className='fa-solid fa-chevron-left w-10 bg-gray-200   px-1 py-3  flex justify-center items-center '></i>
 
-                                    <div className="img w-80 bg-gray-900 h-96 min-[750px]:h-full">
-                                        <img src={ProductDetails.imageUrl[ImageN] ?? "./image.png"} alt="product image" className='h-96 w-80 object-cover min-[750px]:h-full  ' />
-                                    </div>
+                            <div className="img w-80 bg-gray-900 h-96 min-[750px]:h-full">
+                                <img src={ProductDetails.imageUrl[ImageN] ?? "./image.png"} alt="product image" className='h-96 w-80 object-cover min-[750px]:h-full  ' />
+                            </div>
 
                             <i onClick={handleImageRight} className='fa-solid fa-chevron-right w-10 bg-gray-200   px-1 py-3  flex justify-center items-center '></i>
                         </div> : <div className="flex flex-row p-2 px-4 justify-between items-center gap-1 select-none  ">

@@ -49,36 +49,34 @@ function App() {
 
     loadUser()
   }, [])
-  const [wholeContainerClick, setWholeContainerClick] = useState<boolean>(false)
-
-  const apiUrl = import.meta.env.VITE_API_URL;
-
-console.log("API URL:", apiUrl);
+  // const [wholeContainerClick, setWholeContainerClick] = useState<boolean>(false)
 
 
-  const homeMainElement = useRef<HTMLDivElement>(null)
 
 
-  useEffect(() => {
+  // const homeMainElement = useRef<HTMLDivElement>(null)
 
-    const headerElement = homeMainElement.current;
 
-    const handelClick = () => {
-      setWholeContainerClick(false)
-    }
+  // useEffect(() => {
 
-    if (headerElement) {
-      headerElement.addEventListener('click', handelClick)
-    }
+  //   const headerElement = homeMainElement.current;
 
-    return () => {
-      if (headerElement) {
-        headerElement.removeEventListener('click', handelClick)
-      }
+  //   const handelClick = () => {
+  //     setWholeContainerClick(false)
+  //   }
 
-    }
+  //   if (headerElement) {
+  //     headerElement.addEventListener('click', handelClick)
+  //   }
 
-  }, [setWholeContainerClick])
+  //   return () => {
+  //     if (headerElement) {
+  //       headerElement.removeEventListener('click', handelClick)
+  //     }
+
+  //   }
+
+  // }, [setWholeContainerClick])
 
   return (
     <BrowserRouter>
@@ -89,7 +87,6 @@ console.log("API URL:", apiUrl);
         <Route path="/" element={<Home />} />
         <Route path="/login" element={user?._id ? <Home /> : <Login />} />
         <Route path="/signup" element={<SignUp />} />
-        {/* <Route path="/products" element={<IsAuthUser requiredRole='Admin'>< AddProduct  /></IsAuthUser>} /> */}
 
 <Route path='editProducts'>
 <Route index element={<IsAuthUser requiredRole='Admin'>< AllProducts Re_path='/editProducts/edit/?id='  /></IsAuthUser>} />
@@ -112,13 +109,6 @@ console.log("API URL:", apiUrl);
 
         <Route path='*' element={<NotFound/>}/>
       </Routes>
-
-
-      {/* <Routes>
-
-      </Routes>
-      <Routes>
-      </Routes> */}
 
     </BrowserRouter>
   );

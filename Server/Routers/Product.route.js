@@ -4,7 +4,7 @@ const path = require("path");
 const router = express.Router();
 
 const isAuthendicatedUser= require('../utils/isAuthendicatedUser.js');
-const { addProduct, AllProducts, filterProduct, getSingleProduct, likedProduct, rateProduct, addComment, likeComment, dislikeComment, cartProduct, getCartProduct, getCategoryImages, getAdminComments, getRecentView, getRelatedProducts } = require("../Controllers/Product.Controller.js");
+const { addProduct, AllProducts, filterProduct, getSingleProduct, likedProduct, rateProduct, addComment, likeComment, dislikeComment, cartProduct, getCartProduct, getCategoryImages, getAdminComments, getRecentView, getRelatedProducts, editProducts } = require("../Controllers/Product.Controller.js");
 const isAdmin = require("../utils/isAdmin.js");
 
 const storage = multer.diskStorage({
@@ -31,6 +31,7 @@ router.get("/cart",isAuthendicatedUser,getCartProduct);
 router.get("/getRecentView",isAuthendicatedUser,getRecentView);
 
 router.get("/getRelatedProducts",isAuthendicatedUser,getRelatedProducts);
+router.patch("/edit",isAuthendicatedUser,isAdmin,editProducts);
 
 router.get("/admin/comments",isAuthendicatedUser,isAdmin,getAdminComments );
 

@@ -9,7 +9,7 @@ export interface productType {
     inStock: string,
     category: string,
     description: string,
-    imageUrl: string,
+    imageUrl:string [],
     Product_Name: string,
     P_Status: string,
     Comments: [{ userId: string, _id: string, comment: string, userName: string, likes: [{ userId: string }] }],
