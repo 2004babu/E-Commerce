@@ -27,12 +27,12 @@ import Editable_Product from './components/Admin/Products/Editable_Product';
 function App() {
   const { user, setError, setUser, } = useAuthContext();
 
-  
+
   useEffect(() => {
     const loadUser = async () => {
-      const apiurl =import.meta.env.VITE_API_URL;
+      const apiurl = import.meta.env.VITE_API_URL;
       try {
-        const res = await axios.get( ` ${apiurl}/api/auth/loaduser`, { withCredentials: true });
+        const res = await axios.get(` ${apiurl}/api/auth/loaduser`, { withCredentials: true });
 
         if (!res?.data) throw new Error("login first to handle this");
 
@@ -88,26 +88,26 @@ function App() {
         <Route path="/login" element={user?._id ? <Home /> : <Login />} />
         <Route path="/signup" element={<SignUp />} />
 
-<Route path='editProducts'>
-<Route index element={<IsAuthUser requiredRole='Admin'>< AllProducts Re_path='/editProducts/edit/?id='  /></IsAuthUser>} />
-<Route path="edit" element={<IsAuthUser requiredRole='Admin'>< Editable_Product  /></IsAuthUser>} />
+        <Route path='editProducts'>
+          <Route index element={<IsAuthUser requiredRole='Admin'>< AllProducts Re_path='/editProducts/edit/?id=' /></IsAuthUser>} />
+          <Route path="edit" element={<IsAuthUser requiredRole='Admin'>< Editable_Product /></IsAuthUser>} />
 
-</Route>
-
-        <Route path="/productsdetails" element={<IsAuthUser requiredRole='Admin'>< AllProducts  /></IsAuthUser>} />
-        <Route path="/addproducts" element={<IsAuthUser requiredRole='Admin'>< AddProduct  /></IsAuthUser>} />
-        <Route path="/product" element={<IsAuthUser requiredRole='Admin'>< ViewProduct  /></IsAuthUser>} />
-        <Route path="/product/category" element={< FilteredProducts  />} />
-        <Route path="/liked" element={<IsAuthUser requiredRole='user'>< LikedProducts  /></IsAuthUser>} />
-        <Route path="/cart" element={<IsAuthUser requiredRole='user'>< Cart  /></IsAuthUser>} />
-        <Route path="/set_category" element={<IsAuthUser requiredRole='Admin'>< SetCate  /></IsAuthUser>} />
-
-        <Route path="/dashboard"  >
-        <Route index  element={<IsAuthUser requiredRole='Admin'>< OverView  /></IsAuthUser>} />
-        <Route path="comments" element={< DashComments  />} />
         </Route>
 
-        <Route path='*' element={<NotFound/>}/>
+        <Route path="/productsdetails" element={<IsAuthUser requiredRole='Admin'>< AllProducts /></IsAuthUser>} />
+        <Route path="/addproducts" element={<IsAuthUser requiredRole='Admin'>< AddProduct /></IsAuthUser>} />
+        <Route path="/product" element={< ViewProduct />} />
+        <Route path="/product/category" element={< FilteredProducts />} />
+        <Route path="/liked" element={<IsAuthUser requiredRole='user'>< LikedProducts /></IsAuthUser>} />
+        <Route path="/cart" element={<IsAuthUser requiredRole='user'>< Cart /></IsAuthUser>} />
+        <Route path="/set_category" element={<IsAuthUser requiredRole='Admin'>< SetCate /></IsAuthUser>} />
+
+        <Route path="/dashboard"  >
+          <Route index element={<IsAuthUser requiredRole='Admin'>< OverView /></IsAuthUser>} />
+          <Route path="comments" element={<IsAuthUser requiredRole='Admin'>< DashComments /></IsAuthUser>} />
+        </Route>
+
+        <Route path='*' element={<NotFound />} />
       </Routes>
 
     </BrowserRouter>

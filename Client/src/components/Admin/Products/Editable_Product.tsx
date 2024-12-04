@@ -148,7 +148,7 @@ setIsEdited(true)
                 const response = await axios.get(`${apiurl}/api/product/p/${(await query).get('id')}`, { withCredentials: true })
 
                 //this one for recent history session log///
-                const res = await axios.get(`${apiurl}/api/product/filter?viewId=${(await query).get('id')}`, { withCredentials: true })
+                const res = await axios.get(`${apiurl}/api/product/viewlog?viewId=${(await query).get('id')}`, { withCredentials: true })
 
 
                 if (response.data.product) {

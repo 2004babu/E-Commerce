@@ -4,7 +4,7 @@ const path = require("path");
 const router = express.Router();
 
 const isAuthendicatedUser= require('../utils/isAuthendicatedUser.js');
-const { addProduct, AllProducts, filterProduct, getSingleProduct, likedProduct, rateProduct, addComment, likeComment, dislikeComment, cartProduct, getCartProduct, getCategoryImages, getAdminComments, getRecentView, getRelatedProducts, editProducts } = require("../Controllers/Product.Controller.js");
+const { addProduct, AllProducts, filterProduct, getSingleProduct, likedProduct, rateProduct, addComment, likeComment, dislikeComment, cartProduct, getCartProduct, getCategoryImages, getAdminComments, getRecentView, getRelatedProducts, editProducts, AddAndRemoveLikeProduct, viewLogProduct } = require("../Controllers/Product.Controller.js");
 const isAdmin = require("../utils/isAdmin.js");
 
 const storage = multer.diskStorage({
@@ -18,10 +18,12 @@ const storage = multer.diskStorage({
 
 const image=multer({storage})
 
-router.get("/p/:id",isAuthendicatedUser,isAdmin,getSingleProduct);
+router.get("/p/:id",getSingleProduct);
 router.post("/addProduct",isAuthendicatedUser,isAdmin,image.array('Product_Image[]',10),addProduct);
 router.get("/allproduct",isAuthendicatedUser,isAdmin,AllProducts);
-router.get("/filter",isAuthendicatedUser,filterProduct);
+router.get("/filter",filterProduct);
+router.get("/viewlog",isAuthendicatedUser,viewLogProduct);
+router.get("/addLike",isAuthendicatedUser,AddAndRemoveLikeProduct);
 router.get("/liked/:id",isAuthendicatedUser,likedProduct);
 router.patch("/rating",isAuthendicatedUser,rateProduct);
 router.post("/comment",isAuthendicatedUser,addComment);

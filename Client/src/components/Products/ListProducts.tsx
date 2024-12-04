@@ -43,7 +43,7 @@ const ListProducts: React.FC<listType> = ({ refer, parentEl, className, Product,
     // }, [isFirstToLast])
 
     const navigate = useNavigate()
-    const { setError, user } = useAuthContext()
+    const { setError, user ,SetAsyncAfterAuthFuc,asyncAfterAuthFuc} = useAuthContext()
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -55,35 +55,61 @@ const ListProducts: React.FC<listType> = ({ refer, parentEl, className, Product,
 
     const handleLike = async (e: React.MouseEvent<HTMLElement, MouseEvent>, productId: string) => {
         e.stopPropagation()
+        console.log('jfvhdfgvjdf',user);
+        
 
-        const targetClassList = e.currentTarget.classList;
-        if (targetClassList.contains('fa-regular')) {
-            console.log('solid');
-            targetClassList.add('fa-solid', 'text-red-500');
-            targetClassList.remove('fa-regular');
-        } else {
-            console.log('regular');
-            targetClassList.add('fa-regular');
-            targetClassList.remove('fa-solid', 'text-red-500');
-        }
+        const setLike=async(e: React.MouseEvent<HTMLElement, MouseEvent>, productId: string)=>{
+            console.dir(e);
+            console.log(e.currentTarget?.classList);
+            
+        const targetClassList =  e.currentTarget?.classList ??e.target?.classList
+
         setLoading(true);
         try {
             const response = await axios.get(
-                `${apiurl}/api/product/filter?likeId=${productId}`,
+                `${apiurl}/api/product/addLike?likeId=${productId}`,
                 { withCredentials: true }
             );
-            console.log(response);
-            if (response.data.product) {
+            if (response.statusText === 'OK') {
+                if (targetClassList.contains('fa-regular')) {
+                    console.log('solid');
+                    targetClassList.add('fa-solid', 'text-red-500');
+                    targetClassList.remove('fa-regular');
+                } else {
+                    console.log('regular');
+                    targetClassList.add('fa-regular');
+                    targetClassList.remove('fa-solid', 'text-red-500');
+                }
             }
+
+            if (asyncAfterAuthFuc.status && user?._id) {
+                console.log(user);
+                
+                // asyncAfterAuthFuc.fun();
+                SetAsyncAfterAuthFuc({ status: false, fun: () => { } })
+              }
+          
         } catch (error) {
             console.log(error);
             setError((error as Error).message);
         } finally {
             setLoading(false);
+
         }
+        }
+        if (!user?._id) {
+         return asyncAfterAuthFuc.status?null: 
+           SetAsyncAfterAuthFuc({status:true,fun:()=>setLike(e, productId)}) ,navigate('/login', { state: { from: location.href.slice(location.origin.length) } })
+        }
+setLike(e,productId)
 
     };
 
+    const checkAuthUser=async(e: React.MouseEvent<HTMLElement, MouseEvent>, productId: string)=>{
+        
+     
+   
+    }
 
 
     const handleShare = (e: React.MouseEvent<HTMLElement>, productId: string) => {
@@ -181,16 +207,16 @@ const ListProducts: React.FC<listType> = ({ refer, parentEl, className, Product,
                 <div onClick={(e) => handleOpen(e, item._id)} key={index} className="flex flex-col p-1 gap-1 justify-center items-start relative ">
                     {(likeShare) && <div className="w-10 h-10 px-2 py-1 text-md absolute top-0 right-0">
                         {(item?.likedBy && item?.likedBy?.some(value => value?.userId.toString() === user._id.toString())) ?
-                            (<i onClick={(e) => handleLike(e, item._id)} className='fa-solid fa-heart text-red-500'></i>)
+                            (<i onClick={(e) => handleLike(e, item._id)} className='fa-solid fa-heart text-red-500 cursor-pointer'></i>)
                             :
-                            (<i onClick={(e) => handleLike(e, item._id)} className='fa-regular fa-heart'></i>)
+                            (<i onClick={(e) => handleLike(e, item._id)} className='fa-regular fa-heart cursor-pointer'></i>)
                         }
-                        <i onClick={(e) => handleShare(e, item._id)} className='fa-solid fa-share'></i>
+                        <i onClick={(e) => handleShare(e, item._id)} className='fa-solid fa-share cursor-pointer'></i>
                     </div>}
                     <div key={index} className='h-60 max-[465px]:h-48 max-[465px]:w-40 w-56 '>
                         <img src={item?.imageUrl?.length ? item.imageUrl[0] : "./image.png"} alt={` ${item.Product_Name} category photo`} className='h-60 max-[465px]:h-48 max-[465px]:w-40 w-56 max-[465px]:object-contain object-contain' />
                     </div>
-                    <h1 className='font-bold text-lg'>{item.Product_Name.substring(0,15)}</h1>
+                    <h1 className='font-bold text-lg'>{item.Product_Name.substring(0, 15)}</h1>
                     <div className="flex flex-col items-start justify-center gap-1 p-1 text-md">
                         <span className='font-bold text-lg' >{"₹" + Number(item.Price.MRP) * Number(item.Price.Offer) / 100}</span>
                         <div className='flex flex-row gap-2'>
@@ -199,15 +225,15 @@ const ListProducts: React.FC<listType> = ({ refer, parentEl, className, Product,
 
                         </div>
                     </div>
-                    
-                       <div className="flex flex-row p-1 gap-2">
-                       <div className="bg-[#388e3c] font-bold text-sm rounded-sm text-white flex flex-row gap-1 px-[4px] py-[2px] justify-center items-center w-fit">
-                            {item.totalRate.toFixed(1)} <i className='fa-solid fa-star text-sm'></i> 
-                            
+
+                    <div className="flex flex-row p-1 gap-2">
+                        <div className="bg-[#388e3c] font-bold text-sm rounded-sm text-white flex flex-row gap-1 px-[4px] py-[2px] justify-center items-center w-fit">
+                            {item.totalRate.toFixed(1)} <i className='fa-solid fa-star text-sm'></i>
+
                         </div>
-                       <span className='text-sm font-medium text-gray-600'>{item.Ratings.length} reviews</span>
-                       </div>
-                        {Rating &&
+                        <span className='text-sm font-medium text-gray-600'>{item.Ratings.length} reviews</span>
+                    </div>
+                    {Rating &&
                         <div onClick={(e) => {
                             e.stopPropagation()
                         }} className="ratings  flex flex-col">
@@ -225,7 +251,7 @@ const ListProducts: React.FC<listType> = ({ refer, parentEl, className, Product,
                             />
                         </div>
                     }
-                   
+
                     {children}
                 </div>
             )) : !loading ? <h1>not Found</h1> : <Loading />}

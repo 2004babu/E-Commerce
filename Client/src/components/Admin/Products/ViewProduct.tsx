@@ -32,7 +32,7 @@ const ViewProduct = () => {
                 const response = await axios.get(`${apiurl}/api/product/p/${(await query).get('id')}`, { withCredentials: true })
 
                 //this one for recent history session log///
-                const res = await axios.get(`${apiurl}/api/product/filter?viewId=${(await query).get('id')}`, { withCredentials: true })
+                 await axios.get(`${apiurl}/api/product/viewlog?viewId=${(await query).get('id')}`, { withCredentials: true })
 
                 console.log(response);
 
@@ -113,6 +113,7 @@ const ViewProduct = () => {
         e.preventDefault()
         if (!e.currentTarget) return;
 
+        if (!user._id) return navigate('/login',{state:{from:window.location.href}})
         const fromdata = new FormData(e.currentTarget)
         const userCMT = fromdata.getAll('comment-input');
 

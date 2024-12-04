@@ -3,6 +3,7 @@ const ProductModel = require("../Models/Product.model.js");
 const { RESPONSE_SENDER } = require("../utils/RESPONSE_SENDER.js");
 const userModel = require("../Models/user.model.js");
 const categoryModel = require("../Models/category.model.js");
+const isAuthendicatedUser = require("../utils/isAuthendicatedUser.js");
 // const {ObjectId}=require('mongoose').Types
 exports.addProduct = async (req, res, next) => {
   try {
@@ -80,7 +81,7 @@ exports.addProduct = async (req, res, next) => {
 };
 exports.getSingleProduct = async (req, res, next) => {
   try {
-    const user_id = req.user._id;
+    // const user_id = req.user._id;
     const { id } = req.params;
 
     if (!id) {
@@ -121,117 +122,21 @@ exports.getSingleProduct = async (req, res, next) => {
 };
 exports.filterProduct = async (req, res, next) => {
   try {
-    const user_id = req.user._id;
     const { page = 0 } = req.query;
     const limit = 10;
     const skip = page > 0 ? page * limit : 0;
 
     console.log(skip, limit, page);
 
-    const {
-      search = "",
-      inStock = "",
-      category = "",
-      likeId = "",
-      viewId = "",
-    } = req.query;
-
-    // console.log(search, inStock, category);
-
-    if (likeId && mongoose.isValidObjectId(likeId)) {
-      let likeProduct = await ProductModel.findById(likeId);
-      let user = await userModel.findById(user_id);
-
-      if (!user || !likeProduct) {
-        return RESPONSE_SENDER(
-          res,
-          301,
-          { product, message: "product || user  Not Founde " },
-          { message: "id Not Founde " }
-        );
-      }
-
-      let productLike = likeProduct.likedBy;
-
-      //check is already liked ?
-      productLike.forEach((item) => {
-        console.log(item, item.userId.toString() == user_id.toString());
-      });
-
-      if (
-        productLike.some((item) => {
-          return item.userId.toString() === user_id.toString();
-        })
-      ) {
-        console.log("there");
-
-        // if liked it will update log session
-        likeProduct.likedBy = productLike.filter(
-          (like) => like.userId.toString() !== user_id.toString()
-        );
-        user.likes = user.likes.filter(
-          (like) => like.product_id.toString() !== likeId.toString()
-        );
-
-        console.log(productLike);
-      } else {
-        console.log("there not");
-        productLike.push({ userId: user_id });
-        user.likes.push({ product_id: likeId });
-      }
-
-      console.log(productLike);
-      likeProduct.save({ validateBeforeSave: true });
-      user.save({ validateBeforeSave: true });
-      //
-      return RESPONSE_SENDER(
-        res,
-        200,
-        { product: likeProduct, user },
-        { message: "liked SuccessFully " }
-      );
-    }
-    if (viewId && mongoose.isValidObjectId(viewId)) {
-      const viewProduct = await ProductModel.findById(viewId);
-
-      const productview = viewProduct.viewedBy;
-
-      //check is already watch list  ?
-      productview.forEach((item) => {
-        console.log(item, item.userId.toString() == user_id.toString());
-      });
-
-      if (
-        productview.some((item) => {
-          return item.userId.toHexString() === user_id.toString();
-        })
-      ) {
-        console.log("there");
-
-        // if there it will update log session
-        productview.map((prod) => {
-          if (prod.userId.toString() === user_id.toString()) {
-            prod.log.push(Date.now());
-            console.log("enter");
-          }
-        });
-      } else {
-        console.log("there not");
-        productview.push({ userId: user_id });
-      }
-      viewProduct.save({ validateBeforeSave: true });
-
-      return RESPONSE_SENDER(
-        res,
-        200,
-        { productview },
-        { message: "session add SuccessFully " }
-      );
-    }
+    const {  category = "",search=""} = req.query;
 
     if (category) {
       const product = await ProductModel.find({
-        $or:[{category: { $regex: category, $options: "i" }},{Product_Name: { $regex: search, $options: "i" }},{description: { $regex: search, $options: "i" }}]
+        $or: [
+          { category: { $regex: category, $options: "i" } },
+          { Product_Name: { $regex: search, $options: "i" } },
+          { description: { $regex: search, $options: "i" } },
+        ],
       })
         .skip(skip)
         .limit(limit);
@@ -253,10 +158,138 @@ exports.filterProduct = async (req, res, next) => {
     );
   }
 };
+exports.viewLogProduct = async (req, res, next) => {
+  try {
+    const user_id = req?.user?._id;
 
+    const { viewId = "" } = req.query;
+    if (!viewId || !mongoose.isValidObjectId(viewId))
+      return RESPONSE_SENDER(
+        res,
+        401,
+        { message: "ProductId viewLog Is Not Valid " },
+        { message: "ProductId Is Not Valid " }
+      );
+
+    const viewProduct = await ProductModel.findById(viewId);
+
+    const productview = viewProduct.viewedBy;
+
+    //check is already watch list  ?
+    productview.forEach((item) => {
+      console.log( item.userId.toString() == user_id.toString());
+    });
+
+    if (
+      productview.some((item) => {
+        return item.userId.toHexString() === user_id?.toString();
+      })
+    ) {
+      console.log("there");
+
+      // if there it will update log session
+      productview.map((prod) => {
+        if (prod.userId.toString() === user_id?.toString()) {
+          prod.log.push(Date.now());
+          console.log("enter");
+        }
+      });
+    } else {
+      console.log("there not");
+      productview.push({ userId: user_id });
+    }
+    viewProduct.save({ validateBeforeSave: true });
+
+    return RESPONSE_SENDER(
+      res,
+      200,
+      { productview },
+      { message: "session add SuccessFully " }
+    );
+  } catch (error) {
+    console.log(error);
+    return RESPONSE_SENDER(
+      res,
+      401,
+      { message: "error in Product controller ", error },
+      { message: error.message }
+    );
+  }
+};
+
+exports.AddAndRemoveLikeProduct = async (req, res, next) => {
+  try {
+    const user_id = req?.user?._id;
+    const { likeId = "" } = req.query;
+
+    if (!likeId || !mongoose.isValidObjectId(likeId))
+      return RESPONSE_SENDER(
+        res,
+        401,
+        { message: "ProductId Is Not Valid " },
+        { message: "ProductId Is Not Valid " }
+      );
+    let likeProduct = await ProductModel.findById(likeId);
+    let user = await userModel.findById(user_id);
+
+    if (!user || !likeProduct) {
+      return RESPONSE_SENDER(
+        res,
+        301,
+        { message: "product || user  Not Founde " },
+        { message: "id Not Founde " }
+      );
+    }
+
+    let productLike = likeProduct.likedBy;
+
+    //check is already liked ?
+    productLike.forEach((item) => {
+      console.log(item, item.userId.toString() == user_id.toString());
+    });
+
+    if (
+      productLike.some((item) => {
+        return item.userId.toString() === user_id.toString();
+      })
+    ) {
+      console.log("there");
+
+      // if liked it will update log session
+      likeProduct.likedBy = productLike.filter(
+        (like) => like.userId.toString() !== user_id.toString()
+      );
+      user.likes = user.likes.filter(
+        (like) => like.product_id.toString() !== likeId.toString()
+      );
+    } else {
+      console.log("there not");
+      productLike.push({ userId: user_id });
+      user.likes.push({ product_id: likeId });
+    }
+
+    likeProduct.save({ validateBeforeSave: true });
+    user.save({ validateBeforeSave: true });
+    //
+    return RESPONSE_SENDER(
+      res,
+      200,
+      { product: likeProduct, user },
+      { message: "liked SuccessFully " }
+    );
+  } catch (error) {
+    console.log(error);
+    return RESPONSE_SENDER(
+      res,
+      401,
+      { message: "error in Product controller ", error },
+      { message: error.message }
+    );
+  }
+};
 exports.likedProduct = async (req, res, next) => {
   try {
-    const user_id = req.user._id;
+    const user_id = req.user?._id;
     const { page = 0 } = req.query;
     const limit = 10;
     const skip = page > 0 ? page * limit : 0;
@@ -308,7 +341,7 @@ exports.likedProduct = async (req, res, next) => {
 };
 exports.rateProduct = async (req, res, next) => {
   try {
-    const user_id = req.user._id;
+    const user_id = req.user?._id;
     const { productId = "", userRate = 0 } = req.query;
 
     console.log(req.query);
@@ -337,12 +370,12 @@ exports.rateProduct = async (req, res, next) => {
       let totalRate;
       if (
         Product.Ratings.some(
-          (item) => item.userId.toString() === user_id.toString()
+          (item) => item.userId.toString() === user_id?.toString()
         )
       ) {
         console.log("there");
         Product.Ratings = Product.Ratings.map((rate) => {
-          if (rate.userId.toString() === user_id.toString()) {
+          if (rate.userId.toString() === user_id?.toString()) {
             rate.Rate = userRate;
             return rate;
           }
@@ -394,7 +427,7 @@ exports.rateProduct = async (req, res, next) => {
 
 exports.AllProducts = async (req, res, next) => {
   try {
-    const user_id = req.user._id;
+    const user_id = req.user?._id;
     const product = await ProductModel.find({ Owner: user_id });
 
     console.log(product);
@@ -419,7 +452,7 @@ exports.AllProducts = async (req, res, next) => {
 /////comment
 exports.addComment = async (req, res, next) => {
   try {
-    const user_id = req.user._id;
+    const user_id = req.user?._id;
 
     const { userCMT, productId, userName } = req.body;
 
@@ -471,7 +504,7 @@ exports.addComment = async (req, res, next) => {
 };
 exports.likeComment = async (req, res, next) => {
   try {
-    const user_id = req.user._id;
+    const user_id = req.user?._id;
 
     const { productId, CMTId } = req.body;
 
@@ -604,9 +637,7 @@ exports.cartProduct = async (req, res, next) => {
   }
 };
 exports.getCartProduct = async (req, res, next) => {
-
   try {
-
     const { page = 0 } = req.query;
     const limit = 10;
     const skip = page > 0 ? page * limit : 0;
@@ -642,7 +673,9 @@ exports.getCartProduct = async (req, res, next) => {
     }
     const filteredid = user.Cart.map((ids) => ids.product_id);
 
-    const product = await ProductModel.find({ _id: { $in: filteredid } }).skip(skip).limit(limit);
+    const product = await ProductModel.find({ _id: { $in: filteredid } })
+      .skip(skip)
+      .limit(limit);
     // console.log(product);
 
     if (!product) {
@@ -657,7 +690,7 @@ exports.getCartProduct = async (req, res, next) => {
     return RESPONSE_SENDER(
       res,
       200,
-      {Count:product.length, user, product, },
+      { Count: product.length, user, product },
       { message: "cart get  SuccessFully " }
     );
   } catch (error) {
@@ -845,7 +878,7 @@ exports.getRecentView = async (req, res, next) => {
   }
 };
 
-exports.getRelatedProducts = async (req,res,next) => {
+exports.getRelatedProducts = async (req, res, next) => {
   try {
     const user_id = req.user._id;
 
@@ -857,10 +890,8 @@ exports.getRelatedProducts = async (req,res,next) => {
         message: "userId Not Found error in Product controller ",
       });
     }
-    
-    
-    
-    const filterEnnum=  [
+
+    const filterEnnum = [
       "Electronics",
       "Computers",
       "Wearables",
@@ -875,24 +906,20 @@ exports.getRelatedProducts = async (req,res,next) => {
       "Food",
       "Toys",
       "Camara",
-    ]
-    
-    const product=await ProductModel.aggregate([
-      {$match:{category :{$in:filterEnnum}}},
-      {$sample:{size:limit}}
-    ])
-    
-    
+    ];
+
+    const product = await ProductModel.aggregate([
+      { $match: { category: { $in: filterEnnum } } },
+      { $sample: { size: limit } },
+    ]);
+
     if (!product) {
       return RESPONSE_SENDER(res, 401, {
         message: "userId Not Found error in Product controller ",
       });
     }
-    
-    
-    return RESPONSE_SENDER(res, 200, { count:product.length,product
-    });
 
+    return RESPONSE_SENDER(res, 200, { count: product.length, product });
   } catch (error) {
     console.log(error);
     return RESPONSE_SENDER(res, 401, {
@@ -904,11 +931,22 @@ exports.getRelatedProducts = async (req,res,next) => {
 
 exports.editProducts = async (req, res, next) => {
   try {
-    console.log('Incoming Request Query:', req.query);
-    const { Product_Name, MRP, Offer, inStock, category, description, P_Status, Product_Image } = req.body;
+    console.log("Incoming Request Query:", req.query);
+    const {
+      Product_Name,
+      MRP,
+      Offer,
+      inStock,
+      category,
+      description,
+      P_Status,
+      Product_Image,
+    } = req.body;
 
     if (!req.query?.id) {
-      return RESPONSE_SENDER(res, 400, { message: "Product ID is required in the query." });
+      return RESPONSE_SENDER(res, 400, {
+        message: "Product ID is required in the query.",
+      });
     }
 
     const updateFields = {};
@@ -920,22 +958,30 @@ exports.editProducts = async (req, res, next) => {
     if (P_Status) updateFields.P_Status = P_Status;
     if (Product_Image) updateFields.imageUrl = Product_Image;
 
-    console.log('Fields to Update:', updateFields);
+    console.log("Fields to Update:", updateFields);
 
     const product = await ProductModel.findByIdAndUpdate(
-     req.query?.id,
-     {$set:updateFields},
-     {new:true,runValidators:true}
+      req.query?.id,
+      { $set: updateFields },
+      { new: true, runValidators: true }
     );
 
     if (!product) {
-      return RESPONSE_SENDER(res, 404, { message: "Product not found with the given ID." });
+      return RESPONSE_SENDER(res, 404, {
+        message: "Product not found with the given ID.",
+      });
     }
 
-    return RESPONSE_SENDER(res, 200, { message: "Product updated successfully", product });
+    return RESPONSE_SENDER(res, 200, {
+      message: "Product updated successfully",
+      product,
+    });
   } catch (error) {
-    console.error('Error in editProducts:', error);
-    return RESPONSE_SENDER(res, 500, { message: "Error in Product controller", error });
+    console.error("Error in editProducts:", error);
+    return RESPONSE_SENDER(res, 500, {
+      message: "Error in Product controller",
+      error,
+    });
   }
 };
 

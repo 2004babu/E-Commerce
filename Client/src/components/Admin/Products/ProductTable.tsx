@@ -12,15 +12,15 @@ interface Row {
   group: string;
 }
 
-import { productType } from '../../utils/Types'; 
+import { productType } from '../../utils/Types';
 
 
-const ProductTable:React.FC<{Re_path?:string}> = ({Re_path}) => {
+const ProductTable: React.FC<{ Re_path?: string }> = ({ Re_path }) => {
 
   const { setError } = useAuthContext()
 
-  
-  const navigate=useNavigate()
+
+  const navigate = useNavigate()
 
 
   const [products, setProducts] = useState<productType[]>([])
@@ -31,7 +31,7 @@ const ProductTable:React.FC<{Re_path?:string}> = ({Re_path}) => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const apiurl =import.meta.env.VITE_API_URL;
+        const apiurl = import.meta.env.VITE_API_URL;
 
         const response = await axios.get(`${apiurl}/api/product/allproduct`, { withCredentials: true })
         console.log(response?.data.product);
@@ -87,15 +87,15 @@ const ProductTable:React.FC<{Re_path?:string}> = ({Re_path}) => {
 
   }
 
-const handleOpenProduct=async(id:string)=>{
-  if (id) {
-  console.log(id);
+  const handleOpenProduct = async (id: string) => {
+    if (id) {
+      console.log(id);
 
-  navigate(Re_path+id,{state:{from:location.href.replace(location.origin,'')}});
+      navigate(Re_path + id, { state: { from: location.href.replace(location.origin, '') } });
 
-}
+    }
 
-}
+  }
 
 
   return (
@@ -105,16 +105,16 @@ const handleOpenProduct=async(id:string)=>{
         <th>Product_Name</th>
         <th>Category</th>
         {
-          !Price_icon ? (<th className='cursor-pointer mr-1' onClick={handlePrice}>Price<i className="fa-solid fa-caret-up"></i></th>) : (<th className='cursor-pointer mr-1' onClick={ handlePrice}>Price<i className="fa-solid fa-caret-down"></i></th>)
+          !Price_icon ? (<th className='cursor-pointer mr-1' onClick={handlePrice}>Price<i className="fa-solid fa-caret-up"></i></th>) : (<th className='cursor-pointer mr-1' onClick={handlePrice}>Price<i className="fa-solid fa-caret-down"></i></th>)
         }
         {
-          !inStock_icon ? (<th className='cursor-pointer mr-1' onClick={handleStock}>inStock<i className="fa-solid fa-caret-up"></i></th>) : (<th className='cursor-pointer mr-1' onClick={ handleStock}>inStock<i className="fa-solid fa-caret-down"></i></th>)
+          !inStock_icon ? (<th className='cursor-pointer mr-1' onClick={handleStock}>inStock<i className="fa-solid fa-caret-up"></i></th>) : (<th className='cursor-pointer mr-1' onClick={handleStock}>inStock<i className="fa-solid fa-caret-down"></i></th>)
         }
       </tr>
       {filteredPrduct && filteredPrduct.map((item, index) => (
-        <tr key={index} onClick={()=>handleOpenProduct(item._id)} className='flex flex-row gap-3 w-full justify-between items-center  border-b-2 border-gray-200 p-1 '>
-          <td className='p-4'>{index + 1}</td>
-          <td className='p-4'>{item.Product_Name}</td>
+        <tr key={index} onClick={() => handleOpenProduct(item._id)} className='flex flex-row gap-1 w-full p-3 justify-evenly items-center  border-b-2 border-gray-200 p-1 '>
+          <td className=' h-[100px] w-[100px] overflow-hidden p-4'><img className='h-full w-full  rounded-full object-cover' src={item.imageUrl[0] ?? './image.png'} alt="list Images" /></td>
+          <td className='p-4 '>{item.Product_Name.substring(0, 12)}</td>
           <td className='p-4'>{item.category}</td>
           <td className='p-4'>{item.Price.MRP}</td>
           <td className='p-4'>{item.inStock}</td>

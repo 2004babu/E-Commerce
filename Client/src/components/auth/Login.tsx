@@ -1,7 +1,7 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAuthContext } from '../../Context/authContextPrivider'
-import { Link, redirect } from 'react-router-dom'
+import { Link, redirect, useLocation, useNavigate } from 'react-router-dom'
 
 interface authInterface {
   email: string,
@@ -24,32 +24,40 @@ interface authInterface {
 const Login: React.FC = () => {
 
   // redirect('/')
-  const { setUser, user, error, setError, setSuccessMSG } = useAuthContext();
+  const { setUser, user, error, setError, setSuccessMSG, asyncAfterAuthFuc, SetAsyncAfterAuthFuc } = useAuthContext();
+  const navigate = useNavigate()
 
-  console.log(user, error);
+  const location = useLocation()
+
+  console.log(location);
 
 
-  // const apiUrl = process.env.REACT_APP_ANOTHER_VARIABLE;
-  // console.log(apiUrl);
-
-
-  // const [error,setError]=useState<string>("")
   const [formData, setFormData] = useState<authInterface>({ email: "", password: "" })
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log(e);
     e.preventDefault()
     try {
-      const apiurl =import.meta.env.VITE_API_URL;
+      const apiurl = import.meta.env.VITE_API_URL;
 
       const response = await axios.post(`${apiurl}/api/auth/login`, formData, { withCredentials: true })
 
       if (!response?.data?.user) throw new Error('Registration error ')
 
 
-      setUser(response?.data?.user)
+       setUser(response?.data?.user)
       setSuccessMSG('login Success..!')
-      redirect('/')
+      
+
+      
+
+
+      if (location.state.from) {
+        return navigate(location.state.from)
+      }
+      // redirect('/')
+
+      console.log('not open ');
+
     } catch (error) {
       console.log(error);
       setError((error as Error).message)
@@ -63,6 +71,8 @@ const Login: React.FC = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
 
   }
+
+ 
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -94,7 +104,7 @@ const Login: React.FC = () => {
         <button type="submit" className="w-full bg-blue-500 text-white rounded p-2 hover:bg-blue-600 transition duration-200">
           Login
         </button>
-        <Link to={'/signup'}>Register</Link>
+        <Link className='text-blue-400 text-sm' to={'/signup'}>Register</Link>
       </form>
     </div>
   );
