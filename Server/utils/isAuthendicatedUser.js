@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 module.exports = async (req, res, next) => {
   try {
     const { babu } = req.cookies;
-    console.log("babu", babu);
+    // console.log("babu", babu);
 
     if (!babu) {
       return RESPONSE_SENDER(
@@ -20,7 +20,7 @@ module.exports = async (req, res, next) => {
       algorithms: "HS256",
     });
 
-    console.log("id", id);
+    // console.log("id", id);
     if (!id) {
       return RESPONSE_SENDER(
         res,
@@ -41,7 +41,7 @@ module.exports = async (req, res, next) => {
     }
     req.user = user;
 
-    console.log(user);
+    // console.log(user);
     next();
   } catch (error) {
     console.log(error);

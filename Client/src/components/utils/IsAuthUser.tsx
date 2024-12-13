@@ -1,17 +1,18 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect } from 'react'
 import { useAuthContext } from '../../Context/authContextPrivider'
 import Home from '../pages/Home'
 import Login from '../auth/Login'
 
 interface authTypeCheck{
     children: ReactNode,
-    requiredRole:string 
+    requiredRole?:string 
 }
 
-const IsAuthUser:React.FC<authTypeCheck> = ({ children ,requiredRole}) => {
+const IsAuthUser:React.FC<authTypeCheck> = ({ children ,requiredRole='user'}) => {
 
     const { user } = useAuthContext()
 // console.log(children);
+
 
     if (user?._id) {
 

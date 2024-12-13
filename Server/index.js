@@ -11,6 +11,7 @@ dotenv.config({path:path.join(__dirname,'./.local.env')})
 const authRoute =require('./Routers/auth.route.js')
 const productsRoute =require('./Routers/Product.route.js')
 const categoryRoute =require('./Routers/category.route.js')
+const PaymentRoute =require('./Routers/Payment.route.js')
 const connectMongo = require('./utils/db.js')
 
 app.use(cors({origin:'http://localhost:5173',credentials:true,methods:["POST",'GET','PATCH','DELETE']}))
@@ -24,6 +25,7 @@ connectMongo()
 app.use('/api/auth',authRoute)
 app.use('/api/product',productsRoute)
 app.use('/api/controll',categoryRoute)
+app.use('/api/payment',PaymentRoute)
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

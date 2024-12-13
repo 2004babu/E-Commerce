@@ -26,6 +26,8 @@ interface authContextType {
   user: userData;
   error: string;
   successMSG: string;
+  strip:any, setStripe:(stripe:any)=>void;
+
   setError: (error: string) => void;
   setSuccessMSG: (successMSG: string) => void;
   setUser: (user: userData) => void;
@@ -48,6 +50,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     Cart: [{ product_id: "" }]
   });
   const [error, setError] = useState<string>("");
+  const [strip, setStripe] = useState<any>();
   const [successMSG, setSuccessMSG] = useState<string>("");
   const [asyncAfterAuthFuc, SetAsyncAfterAuthFuc] = useState<{ status: boolean, fun: () => (void) }>({
     status: false, fun: () => {
@@ -67,7 +70,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   }, [user])
 
 
-  console.log(asyncAfterAuthFuc);
+  // console.log(asyncAfterAuthFuc);
 
 
   useEffect(() => {
@@ -104,7 +107,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   }, [error, successMSG, setError])
 
   return (
-    <MakeAuthContext.Provider value={{ asyncAfterAuthFuc, SetAsyncAfterAuthFuc, user, error, setUser, setError, successMSG, setSuccessMSG }}>
+    <MakeAuthContext.Provider value={{ strip, setStripe,asyncAfterAuthFuc, SetAsyncAfterAuthFuc, user, error, setUser, setError, successMSG, setSuccessMSG }}>
       {children}
     </MakeAuthContext.Provider>
   );

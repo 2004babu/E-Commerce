@@ -1,7 +1,7 @@
 declare namespace NodeJS {
   interface ProcessEnv {
-    REACT_APP_API_URL: string;
-    REACT_APP_ANOTHER_VARIABLE: string;
+    VITE_API_URL: string;
+    STRIPE_API_PUBLIC_KEY: string;
    
   }
 }

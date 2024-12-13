@@ -1,20 +1,18 @@
-import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Home from './components/pages/Home';
 import Login from './components/auth/Login';
 import SignUp from './components/auth/SignUp';
 import { useAuthContext } from './Context/authContextPrivider';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import IsAuthUser from './components/utils/IsAuthUser';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import OverView from './components/Admin/DashBoard/OverView';
 import HomeHeader from './components/HomeHeader';
-// import SideBar from './components/static/SideBar';
 import AddProduct from './components/Admin/Products/AddProduct';
 import AllProducts from './components/Admin/Products/AllProducts';
 import ViewProduct from './components/Admin/Products/ViewProduct';
-// import ListProducts from './components/Admin/Products/ListProducts';
 import FilteredProducts from './components/Products/FilteredProducts';
 import LikedProducts from './components/Products/LikedProducts';
 import NotFound from './components/static/NotFound';
@@ -22,67 +20,48 @@ import Cart from './components/Products/Cart';
 import SetCate from './components/Admin/category/SetCate';
 import DashComments from './components/Admin/DashBoard/DashComments';
 import Editable_Product from './components/Admin/Products/Editable_Product';
+import GateWayStripe from './components/Payments/GateWayStripe';
+import OrderPlacingPage from './components/OrderPalce/OrderPlacingPage';
+import { Elements } from '@stripe/react-stripe-js';
+import LoadCompletePage from './components/Payments/LoadCompletePage';
+
 
 
 function App() {
-  const { user, setError, setUser, } = useAuthContext();
+  const { user, setError, setUser } = useAuthContext();
 
-
+const [loadUser,setLoadUSer]=useState<boolean>(false)
   useEffect(() => {
     const loadUser = async () => {
       const apiurl = import.meta.env.VITE_API_URL;
       try {
+        setLoadUSer(false)
         const res = await axios.get(` ${apiurl}/api/auth/loaduser`, { withCredentials: true });
 
         if (!res?.data) throw new Error("login first to handle this");
 
         if (res?.data?.user) {
           setUser(res.data.user);
-          // console.log(res.data.user);
 
         }
       } catch (error) {
         console.log(error);
         setError((error as Error).message);
+      }finally{
+        setLoadUSer(true)
       }
     };
 
     loadUser()
   }, [])
-  // const [wholeContainerClick, setWholeContainerClick] = useState<boolean>(false)
 
 
-
-
-  // const homeMainElement = useRef<HTMLDivElement>(null)
-
-
-  // useEffect(() => {
-
-  //   const headerElement = homeMainElement.current;
-
-  //   const handelClick = () => {
-  //     setWholeContainerClick(false)
-  //   }
-
-  //   if (headerElement) {
-  //     headerElement.addEventListener('click', handelClick)
-  //   }
-
-  //   return () => {
-  //     if (headerElement) {
-  //       headerElement.removeEventListener('click', handelClick)
-  //     }
-
-  //   }
-
-  // }, [setWholeContainerClick])
 
   return (
-    <BrowserRouter>
+    <>
       <ToastContainer />
       <HomeHeader />
-      <Routes>
+      {loadUser?<Routes>
 
         <Route path="/" element={<Home />} />
         <Route path="/login" element={user?._id ? <Home /> : <Login />} />
@@ -107,10 +86,21 @@ function App() {
           <Route path="comments" element={<IsAuthUser requiredRole='Admin'>< DashComments /></IsAuthUser>} />
         </Route>
 
-        <Route path='*' element={<NotFound />} />
-      </Routes>
+        <Route path="/place-order" element={<IsAuthUser requiredRole='user'><OrderPlacingPage /></IsAuthUser>} />
+        <Route path="/place-order/:productId" element={<IsAuthUser requiredRole='user'><OrderPlacingPage /></IsAuthUser>}  />
 
-    </BrowserRouter>
+
+        <Route path='/pay/*' element={<IsAuthUser requiredRole='user'><GateWayStripe /></IsAuthUser>} />
+        <Route path='/payment/complete' element={<IsAuthUser requiredRole='user'>
+          <LoadCompletePage/>
+        </IsAuthUser>} />
+
+
+        <Route path='*' element={<NotFound />} />
+      </Routes>:<></>}
+
+    </>
+
   );
 }
 

@@ -43,7 +43,7 @@ const ListProducts: React.FC<listType> = ({ refer, parentEl, className, Product,
     // }, [isFirstToLast])
 
     const navigate = useNavigate()
-    const { setError, user ,SetAsyncAfterAuthFuc,asyncAfterAuthFuc} = useAuthContext()
+    const { setError, user, SetAsyncAfterAuthFuc, asyncAfterAuthFuc } = useAuthContext()
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -55,61 +55,54 @@ const ListProducts: React.FC<listType> = ({ refer, parentEl, className, Product,
 
     const handleLike = async (e: React.MouseEvent<HTMLElement, MouseEvent>, productId: string) => {
         e.stopPropagation()
-        console.log('jfvhdfgvjdf',user);
-        
 
-        const setLike=async(e: React.MouseEvent<HTMLElement, MouseEvent>, productId: string)=>{
-            console.dir(e);
-            console.log(e.currentTarget?.classList);
-            
-        const targetClassList =  e.currentTarget?.classList ??e.target?.classList
 
-        setLoading(true);
-        try {
-            const response = await axios.get(
-                `${apiurl}/api/product/addLike?likeId=${productId}`,
-                { withCredentials: true }
-            );
-            if (response.statusText === 'OK') {
-                if (targetClassList.contains('fa-regular')) {
-                    console.log('solid');
-                    targetClassList.add('fa-solid', 'text-red-500');
-                    targetClassList.remove('fa-regular');
-                } else {
-                    console.log('regular');
-                    targetClassList.add('fa-regular');
-                    targetClassList.remove('fa-solid', 'text-red-500');
+
+        const setLike = async (e: React.MouseEvent<HTMLElement, MouseEvent>, productId: string) => {
+
+
+            const targetClassList = e.currentTarget?.classList 
+
+            setLoading(true);
+            try {
+                const response = await axios.get(
+                    `${apiurl}/api/product/addLike?likeId=${productId}`,
+                    { withCredentials: true }
+                );
+                if (response.statusText === 'OK') {
+                    if (targetClassList.contains('fa-regular')) {
+                        console.log('solid');
+                        targetClassList.add('fa-solid', 'text-red-500');
+                        targetClassList.remove('fa-regular');
+                    } else {
+                        console.log('regular');
+                        targetClassList.add('fa-regular');
+                        targetClassList.remove('fa-solid', 'text-red-500');
+                    }
                 }
+
+                if (asyncAfterAuthFuc.status && user?._id) {
+                    console.log(user);
+
+                    SetAsyncAfterAuthFuc({ status: false, fun: () => { } })
+                }
+
+            } catch (error) {
+                console.log(error);
+                setError((error as Error).message);
+            } finally {
+                setLoading(false);
+
             }
-
-            if (asyncAfterAuthFuc.status && user?._id) {
-                console.log(user);
-                
-                // asyncAfterAuthFuc.fun();
-                SetAsyncAfterAuthFuc({ status: false, fun: () => { } })
-              }
-          
-        } catch (error) {
-            console.log(error);
-            setError((error as Error).message);
-        } finally {
-            setLoading(false);
-
-        }
         }
         if (!user?._id) {
-         return asyncAfterAuthFuc.status?null: 
-           SetAsyncAfterAuthFuc({status:true,fun:()=>setLike(e, productId)}) ,navigate('/login', { state: { from: location.href.slice(location.origin.length) } })
+            return asyncAfterAuthFuc.status ? null :
+                SetAsyncAfterAuthFuc({ status: true, fun: () => setLike(e, productId) }), navigate('/login', { state: { from: location.href.slice(location.origin.length) } })
         }
-setLike(e,productId)
+        setLike(e, productId)
 
     };
 
-    const checkAuthUser=async(e: React.MouseEvent<HTMLElement, MouseEvent>, productId: string)=>{
-        
-     
-   
-    }
 
 
     const handleShare = (e: React.MouseEvent<HTMLElement>, productId: string) => {
