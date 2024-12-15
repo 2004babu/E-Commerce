@@ -87,7 +87,7 @@ const {setError}=useAuthContext()
 
 
   return (
-    <form className="space-y-4">
+    <form className="space-y-4 paymentformseac">
       <div>
         <label className="block text-gray-600">Full Name</label>
         <input

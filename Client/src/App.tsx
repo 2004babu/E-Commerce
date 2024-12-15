@@ -85,8 +85,10 @@ const [loadUser,setLoadUSer]=useState<boolean>(false)
           <Route index element={<IsAuthUser requiredRole='Admin'>< OverView /></IsAuthUser>} />
           <Route path="comments" element={<IsAuthUser requiredRole='Admin'>< DashComments /></IsAuthUser>} />
         </Route>
-
+{/* this place-order for Cart Products  */}
         <Route path="/place-order" element={<IsAuthUser requiredRole='user'><OrderPlacingPage /></IsAuthUser>} />
+
+{/* this place-order for Single Product  */}
         <Route path="/place-order/:productId" element={<IsAuthUser requiredRole='user'><OrderPlacingPage /></IsAuthUser>}  />
 
 

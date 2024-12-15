@@ -22,6 +22,7 @@ const {
   editProducts,
   AddAndRemoveLikeProduct,
   viewLogProduct,
+  filterProductAdmin,
 } = require("../Controllers/Product.Controller.js");
 const isAdmin = require("../utils/isAdmin.js");
 
@@ -51,6 +52,7 @@ router.post(
 );
 router.get("/allproduct", isAuthendicatedUser, isAdmin, AllProducts);
 router.get("/filter", filterProduct);
+router.get("/admin/filter",isAuthendicatedUser,isAdmin, filterProductAdmin);
 router.get("/viewlog", isAuthendicatedUser, viewLogProduct);
 router.get("/addLike", isAuthendicatedUser, AddAndRemoveLikeProduct);
 router.get("/liked/:id", isAuthendicatedUser, likedProduct);
@@ -61,7 +63,7 @@ router.post("/cart", isAuthendicatedUser, cartProduct);
 router.get("/cart", isAuthendicatedUser, getCartProduct);
 router.get("/getRecentView", isAuthendicatedUser, getRecentView);
 
-router.get("/getRelatedProducts", isAuthendicatedUser, getRelatedProducts);
+router.get("/getRelatedProducts", getRelatedProducts);
 router.patch("/edit", isAuthendicatedUser, isAdmin, editProducts);
 
 router.get("/admin/comments", isAuthendicatedUser, isAdmin, getAdminComments);

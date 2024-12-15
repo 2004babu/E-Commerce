@@ -1,12 +1,10 @@
-import React, { ChangeEvent, MouseEvent, useCallback, useEffect, useState } from 'react'
+import  { ChangeEvent, MouseEvent, useCallback, useEffect, useState } from 'react'
 import { useAuthContext } from '../../../Context/authContextPrivider'
 import axios from 'axios'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { productType } from '../../utils/Types'
 import { useDropzone } from 'react-dropzone'
 import HandleHoverBtn from '../../utils/HandleHoverBtn'
-import { log } from 'console'
-import Alert_Pop_up from '../../utils/Alert_Pop_up'
 import { Slide, toast } from 'react-toastify'
 import CryptoJS from 'crypto-js'
 
@@ -28,12 +26,13 @@ const Editable_Product = () => {
 
     const [isEdited, setIsEdited] = useState<boolean>(false)
 
-    const { setError, user, setUser } = useAuthContext()
+    const { setError } = useAuthContext()
     const [imgRefresh, setimgRefresh] = useState<boolean>(true)
     const [removedAll, setRemovedAll] = useState<boolean>(false)
     const [changeImage, setChangeImage] = useState<boolean>(false)
 
     // const [DiscardChanges, setDiscardChanges] = useState<boolean>(false)
+    
     const [isValueset, setisValueSet] = useState<boolean>(false)
     // const [isValuesetSubmited, setisValueSubmited] = useState<boolean>(true)
     const [addNewImage, setAddNewImage] = useState<boolean>(false)
@@ -153,6 +152,7 @@ setIsEdited(true)
 
                 if (response.data.product) {
                     setProductDetails(response.data.product)
+                    setimgRefresh(false)
                 }
             } catch (error) {
                 console.log(error);
@@ -164,150 +164,7 @@ setIsEdited(true)
 
 
 
-    // console.log(ProductDetails);
-    // const handleShare = async () => {
 
-    //     if (navigator) {
-    //         try {
-    //             navigator.share({
-    //                 title: "Check this out!"
-    //                 , text: ",  'Here is a link I wanted to share with you.'",
-    //                 url: window.location.href
-    //             })
-    //             console.log('Content shared successfully')
-    //         } catch (error) {
-    //             console.log(error);
-    //             setError((error as Error).message)
-
-    //         }
-    //     }
-
-    // }
-
-    // const handleRating = async (productId: "", userRate: number) => {
-    //     console.log(productId);
-    //     const apiurl = import.meta.env.VITE_API_URL
-
-    //     try {
-    //         const response = await axios.patch(
-    //             `${apiurl}/api/product/rating`,
-    //             {},
-    //             {
-    //                 params: { productId, userRate },
-    //                 withCredentials: true,
-    //             }
-    //         );
-    //         console.log(response?.data?.product);
-    //         console.log(ProductDetails);
-
-    //         //                 if (response?.data?.product&&Product) {
-    //         //                   let filteredProduct =  Product.map(item=>{
-    //         //                         if (item._id.to""()===response?.data?.product._id.to""()) {
-    //         //                            item=response?.data?.product
-    //         //                            return item
-    //         //                         }
-    //         //                         return item
-    //         //                     })
-    //         // // console.log(filteredProduct);
-
-    //         //                    setProduct? setProduct(filteredProduct):null
-    //         //                 }
-
-    //     } catch (error) {
-    //         console.log(error);
-    //         setError((error as Error).message)
-    //     }
-    // }
-
-
-    // ///comment section
-    // const [clear, setClear] = useState<boolean>(false)
-
-    // const CommentSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-
-    //     e.preventDefault()
-    //     if (!e.currentTarget) return;
-
-    //     const fromdata = new FormData(e.currentTarget)
-    //     const userCMT = fromdata.getAll('comment-input');
-
-    //     console.log(userCMT);
-    //     if (!userCMT[0]) {
-    //         return setError('Fill Comment value')
-    //     }
-    //     try {
-
-    //         const comment = await axios.post(`${apiurl}/api/product/comment`, { userCMT, productId: (await query).get('id'), userName: user.userName }, { withCredentials: true })
-
-    //         console.log(comment);
-    //         if (comment?.data?.product) {
-
-    //             setProductDetails(comment.data.product)
-    //         }
-
-    //     } catch (error) {
-    //         console.log(error);
-    //         setError((error as Error).message)
-    //     } finally {
-    //         setClear(!clear)
-    //     }
-    // }
-
-
-    // ///
-    // const handleThumpUp = async (id: "") => {
-    //     console.log(id);
-    //     try {
-
-    //         const comment = await axios.patch(`${apiurl}/api/product/comment/like`, { productId: (await query).get('id'), CMTId: id }, { withCredentials: true })
-
-    //         if (comment?.data?.product) {
-
-    //             setProductDetails(comment?.data?.product)
-    //         }
-
-    //     } catch (error) {
-    //         console.log(error);
-    //         setError((error as Error).message)
-    //     }
-
-
-    // }
-    // const handleThumpDown = async (id: "") => {
-    //     console.log(id);
-    //     try {
-    //         // console.log('dfkjkdf');
-
-    //         const comment = await axios.patch(`${apiurl}/api/product/comment/dislike`, { productId: (await query).get('id'), CMTId: id }, { withCredentials: true })
-
-    //         console.log(comment);
-
-    //     } catch (error) {
-    //         console.log(error);
-    //         setError((error as Error).message)
-    //     }
-
-
-    // }
-    // const handleCart = async (productId: "") => {
-
-    //     if (!productId) return
-    //     try {
-
-    //         const response = await axios.post(`${apiurl}/api/product/cart`, { productId }, { withCredentials: true })
-
-
-    //         if (response.data.user) setUser(response.data.user)
-    //         if (response.data.product) setProductDetails(response.data.product)
-
-    //     } catch (error) {
-    //         console.log(error);
-    //         setError((error as Error).message)
-    //     } finally {
-    //         // setClear(!clear)
-    //     }
-
-    // }
 
 
     useEffect(() => {
@@ -443,11 +300,6 @@ setIsEdited(true)
             { regex: /^[^a-zA-Z0-9\s]+$/, message: "Appears to be gibberish or symbols" },
         ];
 
-        // for (const pattern of patterns) {
-        //     if (pattern.regex.test(text)) {
-        //         return pattern.message;
-        //     }
-        // }
 
         for (const pattern of patterns) {
             if (pattern.regex.test(text)) {
@@ -486,14 +338,12 @@ setIsEdited(true)
             return CryptoJS.SHA256(json).toString(CryptoJS.enc.Hex); 
 
         }
+        console.log('fffffffff');
 
      async   function areObjectsEqual(obj1:any, obj2:any) {
             const hash1 = generateHash(obj1);
             const hash2 = generateHash(obj2);
             
-            // console.log('Hash1:', hash1);
-            // console.log('Hash2:', hash2);
-          
             return await hash1 === await hash2;
           }
         
@@ -501,6 +351,7 @@ setIsEdited(true)
 
        
           if(checkIsEdited) {
+            setError('Change Detail then Submit!')
             return setIsEdited(false)
           }
         
@@ -535,6 +386,8 @@ setIsEdited(true)
                 setPreEditProductDetails(response.data.product)
                 
                 setIsEdited(false)
+                setRemovedAll(false)
+                setimgRefresh(false)
             }
 
         } catch (error) {
@@ -568,16 +421,17 @@ setIsEdited(true)
                                 <img src={ProductDetails.imageUrl[0] ?? "./image.png"} alt="product image" className='h-96 w-80 object-cover min-[750px]:h-full  ' />
                             </div>
 
-                            {removedAll && <h1 className='absolute text-sm  top-[50%] right-[50%]'>opacity</h1>}
+                            {removedAll && <h1 className='absolute  text-sm font-bold  min-[750px]:right-[10%] top-[50%] right-[50%]'>Add New Image to Click me !!</h1>}
                         </div>}
                 </div>
                 <div className="flex flex-col gap-4 mt-2 p-4 min-[750px]:mt-[65px] min-[750px]:overflow-x-hidden hide-side-bar  min-[750px]:overflow-none">
                     <input name='Product_Name' placeholder='Product_Name' value={ProductDetails.Product_Name} onChange={handleChange} className='border-none outline-none  text-2xl font-bold' />
 
 
-                    <div className='flex flex-row gap-2 '>
-                        $   <input type='number' name='MRP' placeholder='MRP' className='border-none outline-none' value={ProductDetails.Price.MRP ?? ""} onChange={handleChange} />
-                        $   <input type='number' name='Offer' placeholder='Offer' className='border-none outline-none' value={ProductDetails.Price.Offer ?? ""} onChange={handleChange} />
+                    
+                    <div className='flex flex-row gap-2 text-md font-bold items-center text-[20px]'>
+                        $   <input type='number' name='MRP' placeholder='MRP' className='border-none outline-none ' value={ProductDetails.Price.MRP ?? ""} onChange={handleChange} />
+                        %  <input type='number' name='Offer' placeholder='Offer' className='border-none outline-none' value={ProductDetails.Price.Offer ?? ""} onChange={handleChange} />
 
                     </div>
                     <div className="bg-[#388e3c] font-bold text-md rounded-sm text-white flex flex-row gap-1 px-2 py-1 justify-center items-center w-fit">
@@ -602,16 +456,16 @@ setIsEdited(true)
                     </div>
                     {/* ///chaneg Iimage */}
                     <div className="flex flex-row w-full gap-2 p-2 h-fit">
-                        <button onClick={handleRemoveSingleIMG} onMouseEnter={(e) => HandleHoverBtn(e, 'Romove This Image !')} onMouseLeave={(e) => HandleHoverBtn(e)} className="p-2  bg-blue-400 rounded-md hover:bg-blue-500 text-[12px]  ">Remove this</button>
-                        <button onClick={handleRemoveAllIMG} onMouseEnter={(e) => HandleHoverBtn(e, 'Romove All Image !')} onMouseLeave={(e) => HandleHoverBtn(e)} className="p-2  bg-blue-400 rounded-md hover:bg-blue-500 text-[12px]">Remove All</button>
+                        <button onClick={handleRemoveSingleIMG} onMouseEnter={(e) => HandleHoverBtn(e, 'Romove This Image !')} onMouseLeave={(e) => HandleHoverBtn(e)} className="p-2  bg-blue-600 rounded-md hover:bg-blue-800 text-[12px]  ">Remove this</button>
+                        <button onClick={handleRemoveAllIMG} onMouseEnter={(e) => HandleHoverBtn(e, 'Romove All Image !')} onMouseLeave={(e) => HandleHoverBtn(e)} className="p-2  bg-blue-600 rounded-md hover:bg-blue-800 text-[12px]">Remove All</button>
                         {!addNewImage ?
-                            <button onMouseEnter={(e) => HandleHoverBtn(e, 'Add Image !')} onMouseLeave={(e) => HandleHoverBtn(e)} onClick={() => setAddNewImage(!addNewImage)} className="p-2  bg-blue-400 rounded-md hover:bg-blue-500 text-[12px]">Change Img
+                            <button onMouseEnter={(e) => HandleHoverBtn(e, 'Add Image !')} onMouseLeave={(e) => HandleHoverBtn(e)} onClick={() => setAddNewImage(!addNewImage)} className="p-2  bg-blue-600 rounded-md hover:bg-blue-800 text-[12px]">Change Img
                             </button>
                             :
-                            <button onMouseEnter={(e) => HandleHoverBtn(e, 'Close Add Image options !')} onMouseLeave={(e) => HandleHoverBtn(e)} onClick={() => setAddNewImage(!addNewImage)} className="p-2  bg-blue-400 rounded-md hover:bg-blue-500 text-[12px]">Close
+                            <button onMouseEnter={(e) => HandleHoverBtn(e, 'Close Add Image options !')} onMouseLeave={(e) => HandleHoverBtn(e)} onClick={() => setAddNewImage(!addNewImage)} className="p-2  bg-blue-600 rounded-md hover:bg-blue-800 text-[12px]">Close
                             </button>
                         }
-                        <button disabled={imgRefresh} onClick={handleRefreshIMG} onMouseEnter={(e) => HandleHoverBtn(e, 'refresh TO get Old Images !')} onMouseLeave={(e) => HandleHoverBtn(e)} className="p-2   rounded-md hover:bg-gray-300 text-[12px]"><i className='fa-solid fa-arrows-rotate'></i></button>
+                        <button disabled={imgRefresh} onClick={handleRefreshIMG} onMouseEnter={(e) => HandleHoverBtn(e, 'refresh TO get Old Images !')} onMouseLeave={(e) => HandleHoverBtn(e)} className={`p-2 ${imgRefresh? 'cursor-not-allowed':"hover:bg-gray-300 cursor-pointer"}    rounded-md  text-[12px]`}><i className='fa-solid fa-arrows-rotate'></i></button>
 
                     </div>
                     {addNewImage && <>

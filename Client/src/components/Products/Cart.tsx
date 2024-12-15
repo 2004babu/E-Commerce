@@ -155,12 +155,16 @@ const Cart = () => {
           Product={Product}
           setProduct={setProduct}
           endMSG={cartEndMSG}
-          Rating={true}
-        /> :
+          Rating={false}
+        />
+        
+
+        :
         <div className="flex flex-col w-full p-3 font-bold text-xl h-80">
           Your Cart Is Empty
         </div>
       }
+      <button onClick={()=>navigate('/place-order?cart=true',{state:{from:location.href}})} className='bg-yellow-500 px-3 py-2'>BUY CART</button>
 
       <RelatableProducts endMSG={listEndMSG} setRelatedProduct={setRelatedProduct} RelatedhasMore={RelatedhasMore} fetchRelatedProduct={fetchRelatedProduct} RelatedProduct={RelatedProduct} />
 

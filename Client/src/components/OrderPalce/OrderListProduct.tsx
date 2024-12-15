@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {motion} from 'framer-motion'
 import { productType } from '../utils/Types'
+import { useNavigate } from 'react-router-dom'
 
 interface orderListType{
     item:productType,
@@ -11,7 +12,7 @@ interface orderListType{
 const OrderListProduct:React.FC<orderListType> = ({item,index}) => {
     const [showDetails, setShowDetails] = useState<boolean>(false)
 
-
+const navigate=useNavigate()
 
 
     useEffect(() => {
@@ -26,7 +27,7 @@ const OrderListProduct:React.FC<orderListType> = ({item,index}) => {
     }
 
   return (
-    <div  className='flex-row flex max-[550px]:flex-col w-full h-full justify-center items-center overflow-hidden border-b-2 border-gray-300'  key={index} ><motion.div className="flex flex-col h-48 w-48  overflow-hidden p-2"
+    <div onClick={()=>navigate(`/product?id=${item?._id}`,{state:{from:location.href.substring(location.origin.length)}})}  className='flex-row flex max-[550px]:flex-col w-full h-full justify-center items-center overflow-hidden border-b-2 border-gray-300'  key={index} ><motion.div className="flex flex-col h-48 w-48  overflow-hidden p-2"
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5 }}
@@ -55,9 +56,10 @@ const OrderListProduct:React.FC<orderListType> = ({item,index}) => {
                         <h1 className='text-2xl font-bold'>
                             {item?.Product_Name ?? ""}
                         </h1>
-                        <div className='flex flex-row gap-2 text-md font-bold '>
-                            <h1> {'$' + item?.Price?.MRP}</h1>
-                            <span> {'$' + item?.Price?.Offer}</span>
+                        <div className='flex flex-row gap-2 text-md font-bold items-center'>
+                        <h1 className="text-[30px]"> {"₹"  +`${(Number(item.Price.MRP)-Number(item.Price.MRP)*Number(item.Price.Offer)/100).toFixed(2)}`}</h1>
+                        <span className='line-through font-normal text-gray-400'> {"₹" + Number(item.Price.MRP)}</span>
+                        <span className='text-sm text-green-800 font-semibold'> { item.Price.Offer+"%  Off" }</span>
                         </div>
                         <div className="bg-[#388e3c] font-bold text-md rounded-sm text-white flex flex-row gap-1 px-2 py-1 justify-center items-center w-fit">
 

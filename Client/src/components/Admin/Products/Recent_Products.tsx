@@ -1,7 +1,5 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import React, { Dispatch, SetStateAction, useRef } from 'react'
 import ListProducts from '../../Products/ListProducts'
-import axios from 'axios'
-import { useAuthContext } from '../../../Context/authContextPrivider'
 
 import { productType } from '../../utils/Types' 
 

@@ -23,21 +23,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ nextStep }) => {
 
     const [Product, setProduct] = useState<productType[]>([])
 
-    const useQuery=()=>{
-        return new URLSearchParams(useLocation().search)
-    }
-
-    // const query=useQuery()
-    console.log(Product);
-
-    // useEffect(() => {
-       
-
-    //     if (document.body.clientWidth >= 700) {
-    //         setShowDetails(true)
-    //     }
-    // }, [])
-    console.log(productId)
+    
 
     useEffect(() => {
         const handleResize = () => {
@@ -61,6 +47,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ nextStep }) => {
     useEffect(() => {
         if (!productId) {
             return
+
         }
         const fetchProduct = async () => {
             try {
@@ -118,7 +105,8 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ nextStep }) => {
         }
     }, [isCart])
 
-    if (!productId) {
+    if (!productId&&!isCart) {
+
         setError('Check Url Product Id Not Foundor Wrong')
         return  <NotFound/>
     }

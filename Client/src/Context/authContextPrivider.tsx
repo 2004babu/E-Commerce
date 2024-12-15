@@ -58,7 +58,6 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
 
-
   useEffect(() => {
 
     if (asyncAfterAuthFuc.status && user?._id) {

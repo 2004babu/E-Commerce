@@ -2,8 +2,8 @@ const { default: mongoose } = require("mongoose");
 const ProductModel = require("../Models/Product.model.js");
 const { RESPONSE_SENDER } = require("../utils/RESPONSE_SENDER.js");
 const userModel = require("../Models/user.model.js");
-const categoryModel = require("../Models/category.model.js");
-const isAuthendicatedUser = require("../utils/isAuthendicatedUser.js");
+// const categoryModel = require("../Models/category.model.js");
+// const isAuthendicatedUser = require("../utils/isAuthendicatedUser.js");
 // const {ObjectId}=require('mongoose').Types
 exports.addProduct = async (req, res, next) => {
   try {
@@ -126,17 +126,69 @@ exports.filterProduct = async (req, res, next) => {
     const limit = 10;
     const skip = page > 0 ? page * limit : 0;
 
-    console.log(skip, limit, page);
+    let { category, search } = req.query;
 
-    const {  category = "",search=""} = req.query;
+    
 
+    const product = await ProductModel.find({
+      // $and: [
+        // { 
+          category: { $regex: category, $options: "i" }
+        //  },
+        // {
+        //   $or: [
+        //     { Product_Name: { $regex: search, $options: "i" } },
+        //     { description: { $regex: search, $options: "i" } },
+        //   ],
+        // },
+      // ],
+    })
+      .skip(skip)
+      .limit(limit);
+
+    return RESPONSE_SENDER(
+      res,
+      200,
+      { product, count: product.length },
+      { message: "Product filtered SuccessFully " }
+    );
+  } catch (error) {
+    console.log(error);
+    return RESPONSE_SENDER(
+      res,
+      401,
+      { message: "error in Product controller ", error },
+      { message: error.message }
+    );
+  }
+};
+exports.filterProductAdmin = async (req, res, next) => {
+  try {
+    const user_id = req.user._id;
+    const { page = 0 } = req.query;
+    const limit = 10;
+    const skip = page > 0 ? page * limit : 0;
+
+    let { category, search } = req.query;
+
+    if (category==="Choose") {
+      category=''
+    }
+    if (category === "AllProdunncts") {
+      const product = await ProductModel.find({ Owner: user_id })
+        .skip(skip)
+        .limit(limit);
+
+      return RESPONSE_SENDER(
+        res,
+        200,
+        { count: product.length, product },
+        { message: "Product Get SuccessFully " }
+      );
+    }
     if (category) {
       const product = await ProductModel.find({
-        $or: [
-          { category: { $regex: category, $options: "i" } },
-          { Product_Name: { $regex: search, $options: "i" } },
-          { description: { $regex: search, $options: "i" } },
-        ],
+        category: { $regex: category, $options: "i" },
       })
         .skip(skip)
         .limit(limit);
@@ -148,6 +200,21 @@ exports.filterProduct = async (req, res, next) => {
         { message: "Product filtered SuccessFully " }
       );
     }
+    const product = await ProductModel.find({
+      $or: [
+        { Product_Name: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ],
+    })
+      .skip(skip)
+      .limit(limit);
+
+    return RESPONSE_SENDER(
+      res,
+      200,
+      { product, count: product.length },
+      { message: "Product filtered SuccessFully " }
+    );
   } catch (error) {
     console.log(error);
     return RESPONSE_SENDER(
@@ -177,7 +244,7 @@ exports.viewLogProduct = async (req, res, next) => {
 
     //check is already watch list  ?
     productview.forEach((item) => {
-      console.log( item.userId.toString() == user_id.toString());
+      console.log(item.userId.toString() == user_id.toString());
     });
 
     if (
@@ -428,14 +495,28 @@ exports.rateProduct = async (req, res, next) => {
 exports.AllProducts = async (req, res, next) => {
   try {
     const user_id = req.user?._id;
-    const product = await ProductModel.find({ Owner: user_id });
 
-    console.log(product);
+    const { page = 0 } = req.query;
+    const limit = 10;
+    const skip = page > 0 ? page * limit : 0;
+
+    const product = await ProductModel.find({ Owner: user_id })
+      .skip(skip)
+      .limit(limit);
+
+    if (!product) {
+      return RESPONSE_SENDER(
+        res,
+        301,
+        { message: "product Found ! " },
+        { message: "id Not Founde " }
+      );
+    }
 
     return RESPONSE_SENDER(
       res,
       200,
-      { product },
+      { count: product.length, product },
       { message: "Product Get SuccessFully " }
     );
   } catch (error) {
@@ -880,16 +961,16 @@ exports.getRecentView = async (req, res, next) => {
 
 exports.getRelatedProducts = async (req, res, next) => {
   try {
-    const user_id = req.user._id;
+    // const user_id = req.user._id;
 
     const { page = 0 } = req.query;
     const limit = 20;
     const skip = page > 0 ? page * limit : 0;
-    if (!user_id) {
-      return RESPONSE_SENDER(res, 401, {
-        message: "userId Not Found error in Product controller ",
-      });
-    }
+    // if (!user_id) {
+    //   return RESPONSE_SENDER(res, 401, {
+    //     message: "userId Not Found error in Product controller ",
+    //   });
+    // }
 
     const filterEnnum = [
       "Electronics",

@@ -15,7 +15,7 @@ const ProductContext = ({ children }: { children: ReactNode }) => {
 
     const [ProductDetails, setProductDetails] = useState<productType>({
         _id: '',
-        search: "",
+        // search: "",
         Price: {
             MRP: "",
             Offer: ""
@@ -23,7 +23,7 @@ const ProductContext = ({ children }: { children: ReactNode }) => {
         inStock: "",
         category: "",
         description: "",
-        imageUrl: "",
+        imageUrl: [''],
         Product_Name: '',
         P_Status: '',
         Comments: [{userId:'',_id:"",comment:"",userName:"",likes:[{userId:''}]}],
@@ -32,6 +32,7 @@ const ProductContext = ({ children }: { children: ReactNode }) => {
         totalRate:0
 
     })
+    console.log(ProductDetails)
 
     return (
         <context.Provider value={{ ProductDetails, setProductDetails }}>

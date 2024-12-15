@@ -93,7 +93,7 @@ const STATUS_CONTENT_MAP: Record<
 export default function CompletePage(): JSX.Element {
   const stripe = useStripe();
 
-  const [status, setStatus] = useState<string>("default");
+  const [status, setStatus] = useState<string>("processing");
   const [intentId, setIntentId] = useState<string | null>(null);
 
   useEffect(() => {
