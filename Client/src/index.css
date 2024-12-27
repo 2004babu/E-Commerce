@@ -24,6 +24,8 @@
 
 *{
     box-sizing: border-box;
+    scroll-behavior: smooth;
+    
 }
 .App {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;

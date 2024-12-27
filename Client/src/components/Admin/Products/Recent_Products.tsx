@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction, useRef } from 'react'
 import ListProducts from '../../Products/ListProducts'
 
 import { productType } from '../../utils/Types' 
+import { useAuthContext } from '../../../Context/authContextPrivider'
 
 
 interface RecentPTtype {
@@ -27,12 +28,13 @@ const Recent_Products: React.FC<RecentPTtype> = ({
     endMSG
 }) => {
 
-    
+    const {user}=useAuthContext()
+
     const Recent_Products = useRef<HTMLDivElement>(null);
     return (
         <div id='Recent_Products' ref={Recent_Products} className="flex flex-row overflow-x-scroll overflow-y-hidden hide-side-bar   p-2 w-full h-full border-t-2 border-gray-300 relative flex-nowrap mt-[100px]">
             <h1 className='absolute top-3 left-5 z-10 font-bold text-lg'>Recent Products</h1>
-            {RecentProduct && RecentProduct.length ?
+            {(user._id&&RecentProduct && RecentProduct.length) ?
                 <ListProducts parentEl='Recent_Products'
                     className="flex flex-row p-2  justify-start items-start gap-3 mt-[65px]"
                     Rating={Rating}
@@ -49,7 +51,7 @@ const Recent_Products: React.FC<RecentPTtype> = ({
                 {children??null}
                 </ListProducts> :
                 // if list is empty then get random Products
-                <div className="flex flex-col w-full p-3 font-bold text-xl h-80">
+                <div className="flex flex-col w-full p-3 font-bold text-xl h-80 text-gray-500">
                     random fetch will be Add
                 </div>
             }

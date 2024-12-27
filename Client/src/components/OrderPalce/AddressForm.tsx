@@ -1,7 +1,8 @@
 import React from "react";
 import  { useEffect, useState } from "react";
-import { useActionData, useNavigate, useParams } from "react-router-dom";
+import {    useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../../Context/authContextPrivider";
+
 
 interface AddressFormProps {
   nextStep: () => void;
@@ -18,13 +19,24 @@ interface AddressType {
   secondaryPhoneNo?: string;
 }
 
-const AddressForm: React.FC<AddressFormProps> = ({ nextStep, prevStep }) => {
-    const navigate=useNavigate()
-
-
-        const { productId } = useParams()
-
-
+const AddressForm: React.FC<AddressFormProps> = ({  prevStep }) => {
+  const navigate=useNavigate()
+  
+      const [isWrongUrl, setIsWrongUrl] = useState<boolean>(false);
+  let cart:boolean= false 
+  const { productId } = useParams()
+  const useQuery=async()=>{
+        
+    const location = useLocation();
+    const query = new URLSearchParams(location.search);
+    console.log(query.get('cart'));  
+       query.get('cart')==='true' ? cart=true :cart=false
+       if (!productId&&!(query.get('cart')==='true')) {
+        setIsWrongUrl(true)
+       }
+  }
+  
+  
   const [address, setAddress] = useState<AddressType>({
     name: "",
     address: "",
@@ -43,10 +55,12 @@ const {setError}=useAuthContext()
 
   useEffect(() => {
 
-    if (!productId) {
-      setError('Check Url Product Id Not Foundor Wrong')
-
-    }
+    
+        if (isWrongUrl) {
+          setError('Check Url Product Id Not Foundor Wrong')
+          return
+        }
+    useQuery()
 
     // Load shipping info from localStorage if exists
     const storedShippingInfo = localStorage.getItem("shippingInfoE_com");
@@ -76,12 +90,12 @@ const {setError}=useAuthContext()
 
   const saveAndNext = async () => {
     if (eligibleToNext) return;
-    if (!productId) {
-      return  setError('Check Url Product Id Not Found or Wrong Id')
-
-  }
+    if (isWrongUrl ) {
+      setError('Check Url Product Id Not Foundor Wrong')
+      return
+    }
     localStorage.setItem("shippingInfoE_com", JSON.stringify(address));
-       return   navigate(`/pay?PId=${productId}`)
+       return cart? navigate(`/pay?cart=true`): navigate(`/pay?PId=${productId}`)
 
   };
 
@@ -98,6 +112,7 @@ const {setError}=useAuthContext()
           type="text"
           className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
           placeholder="Enter your full name"
+          required
         />
       </div>
       <div>
@@ -108,6 +123,7 @@ const {setError}=useAuthContext()
           onChange={handleChange}
           className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
           placeholder="Enter your address"
+          required
         />
       </div>
       <div>
@@ -119,11 +135,13 @@ const {setError}=useAuthContext()
           type="text"
           className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
           placeholder="Enter your state"
+          required
         />
       </div>
       <div>
         <label className="block text-gray-600">District</label>
         <input
+        required
           name="district"
           value={address.district}
           onChange={handleChange}
@@ -135,6 +153,7 @@ const {setError}=useAuthContext()
       <div>
         <label className="block text-gray-600">Pincode</label>
         <input
+        required
           name="pincode"
           value={address.pincode}
           onChange={handleChange}
@@ -148,6 +167,7 @@ const {setError}=useAuthContext()
       <div>
         <label className="block text-gray-600">Phone Number</label>
         <input
+        required
           name="phoneNo"
           value={address.phoneNo}
           onChange={handleChange}
@@ -160,6 +180,7 @@ const {setError}=useAuthContext()
       <div>
         <label className="block text-gray-600">Secondary Phone Number (Optional)</label>
         <input
+        required
           name="secondaryPhoneNo"
           value={address.secondaryPhoneNo}
           onChange={handleChange}

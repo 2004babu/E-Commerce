@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useEffect ,useState} from 'react'
+import  { useEffect ,useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
@@ -13,22 +13,22 @@ interface typecategory {
 const HomeGategory = () => {
 
   const navigate = useNavigate()
-  const catogeryEnnum = [
-    "Electronics",
-    "Computers",
-    "Wearables",
-    "Accessories",
-    "Health",
-    "Footwear",
-    "Kitchen",
-    "Gaming Laptop",
-    "Dress",
-    "Mobile",
-    "Gadgets",
-    "Food",
-    "Toys",
-    "Camara",
-  ]
+  // const catogeryEnnum = [
+  //   "Electronics",
+  //   "Computers",
+  //   "Wearables",
+  //   "Accessories",
+  //   "Health",
+  //   "Footwear",
+  //   "Kitchen",
+  //   "Gaming Laptop",
+  //   "Dress",
+  //   "Mobile",
+  //   "Gadgets",
+  //   "Food",
+  //   "Toys",
+  //   "Camara",
+  // ]
   const [category, setCategory] = useState<typecategory[]>([])
 
 
@@ -56,7 +56,7 @@ const HomeGategory = () => {
     navigate(`/product/category?q=${category}`)
   }
   return (
-    <div className='flex flex-col flex-wrap w-100 h-64 lg:gap-6 hide-side-bar gap-3 gap-y-4 p-3 bg-orange-900/[.07] text-black overflow-x-scroll justify-pevenly'>
+    <div className='flex flex-col flex-wrap w-full h-64 lg:gap-6 hide-side-bar gap-3 gap-y-4 p-3 bg-orange-900/[.07] text-black overflow-x-scroll justify-pevenly'>
       {category.length>0 && category.map((item, index) => (
         <div  onClick={() => handlecategory(item.category)} key={index} className="flex flex-col">
           <img style={{ height: "80px", width: '80px' }} src={item.image.imageURL} alt="mobile23" className='object-cover rounded-full ' />

@@ -1,6 +1,5 @@
 // import axios from "axios";
-import { useContext, createContext, ReactNode, useState, useEffect, SetStateAction } from "react";
-import Login from "../components/auth/Login";
+import { useContext, createContext, ReactNode, useState, useEffect } from "react";
 import { Slide, toast } from "react-toastify";
 
 

@@ -21,7 +21,8 @@ const navigate=useNavigate()
             setShowDetails(true)
         }
     }, [])
-    const handleShowdetails = () => {
+    const handleShowdetails = (e:React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation()
         setShowDetails(!showDetails)
 
     }

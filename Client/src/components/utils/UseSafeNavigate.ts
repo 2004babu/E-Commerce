@@ -1,11 +1,11 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import {  useLocation } from 'react-router-dom';
 
-const UseSafeNavigate = async(path:string) => {
+const UseSafeNavigate = async() => {
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const location = useLocation();
 
-  return (path:string) => {
+  return () => {
       const from = location.pathname;
       console.log(from);
       

@@ -1,8 +1,5 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import React, { Dispatch, SetStateAction, useRef } from 'react'
 import ListProducts from '../../Products/ListProducts'
-import axios from 'axios'
-import { useAuthContext } from '../../../Context/authContextPrivider'
-import { jsx } from 'react/jsx-runtime'
 
 
 import { productType } from '../../utils/Types' 
@@ -44,6 +41,9 @@ const RelatableProducts: React.FC<RelatableTtype> = ({
                     haseMore={RelatedhasMore}
                     Product={RelatedProduct}
                     setProduct={setRelatedProduct}
+                    Rating={Rating}
+                    likeShare={likeShare}
+                    children={children}
                 /> :
                 <div className="flex flex-col w-full p-3 font-bold text-xl h-80">
                     random fetch will be Add

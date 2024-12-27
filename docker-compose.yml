@@ -1,0 +1,31 @@
+  services:
+    frontend:
+      build:
+        context: ./Client
+      ports:
+        - "8000:80"
+      networks:
+        - mern-network
+    backend:
+      build:
+
+        context: ./Server
+      ports:
+        - "9000:9000"
+      networks:
+        - mern-network
+
+
+    mongo:
+      image: mongo:latest 
+
+      ports:
+        - "27017:27017"
+
+      networks:
+        - mern-network
+
+  networks:
+    mern-network:
+      driver: bridge
+

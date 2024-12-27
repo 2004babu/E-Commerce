@@ -1,10 +1,8 @@
 import axios from 'axios';
-import React, { Fragment, useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import React, {  useEffect, useState } from 'react';
+import {  useParams } from 'react-router-dom';
 import { productType } from '../utils/Types';
-import { motion } from 'framer-motion'
 import OrderListProduct from './OrderListProduct';
-import { toast } from 'react-toastify';
 import NotFound from '../static/NotFound';
 import { useAuthContext } from '../../Context/authContextPrivider';
 
@@ -14,10 +12,11 @@ interface OrderDetailsProps {
 }
 
 const OrderDetails: React.FC<OrderDetailsProps> = ({ nextStep }) => {
-    const navigate=useNavigate()
+    // const navigate=useNavigate()
     const apiurl = import.meta.env.VITE_API_URL
     const { productId } = useParams()
     const [isCart, setIsCart] = useState<boolean>(false)
+    const [IsWrongUrl, setIsWrongUrl] = useState<boolean>(false)
     const [showDetails, setShowDetails] = useState<boolean>(false)
     const {setError}=useAuthContext()
 
@@ -55,14 +54,16 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ nextStep }) => {
                 const response = await axios.get(`${apiurl}/api/product/p/${productId}`, { withCredentials: true })
 
 
-                console.log(response.data.product);
+                console.log(response.data.message);
 
                 if (response.data.product) {
                     setProduct((prev) => [...prev, response.data.product]);
+                }else{
+                    throw  Error(response.data.message)
                 }
             } catch (error) {
                 console.log(error);
-                // setError((error as Error).message)
+                setError((error as Error).message)
             }
         }
         fetchProduct()
@@ -72,9 +73,14 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ nextStep }) => {
     useEffect(() => {
         const useQuery = async () => {
             const query = new URLSearchParams(location.search)
-            if (await query.get('cart')) {
-                setIsCart(true)
-            }
+            await query.get('cart')==='true' ? setIsCart(true) :setIsCart(false) 
+            console.log(!productId,!(await query.get('cart')==='true'))
+            if (!productId&&!(await query.get('cart')==='true')) {
+                console.log('enter');
+                
+                        setIsWrongUrl(true)
+                        
+                    }
         }
         useQuery()
 
@@ -104,8 +110,10 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ nextStep }) => {
             //   setIsCart(false)
         }
     }, [isCart])
+console.log(!productId,!isCart);
 
-    if (!productId&&!isCart) {
+    if (IsWrongUrl) {
+// console.log('enter');
 
         setError('Check Url Product Id Not Foundor Wrong')
         return  <NotFound/>

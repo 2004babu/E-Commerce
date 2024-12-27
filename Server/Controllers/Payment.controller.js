@@ -1,8 +1,10 @@
 const { RESPONSE_SENDER } = require("../utils/RESPONSE_SENDER");
 const ProductModle = require("../Models/Product.model");
+const UserModle = require("../Models/user.model");
 
 const Stripe = require("stripe");
 const { default: mongoose } = require("mongoose");
+const userModel = require("../Models/user.model");
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 console.log(process.env.STRIPE_SECRET_KEY);
@@ -37,7 +39,7 @@ exports.ProductPayment = async (req, res, next) => {
     const paymentOPtion = {
       amount: AmountWithDiscount * 100,
       currency: "usd",
-      description: Product.description??'',
+      description: Product.description ?? "",
       automatic_payment_methods: { enabled: true },
       // payment_method_types: [ 'card', 'link', 'cashapp' ],
       // capture_method: "manual",
@@ -48,13 +50,12 @@ exports.ProductPayment = async (req, res, next) => {
         ProductName: Product.Product_Name,
         email: user.email,
         Role: user.Role,
-        
       },
     };
-    const paymentIntent = await stripe.paymentIntents.create(  {
+    const paymentIntent = await stripe.paymentIntents.create({
       amount: AmountWithDiscount * 100,
       currency: "usd",
-      description: Product.description??'',
+      description: Product.description ?? "",
       automatic_payment_methods: { enabled: true },
       // payment_method_types: [ 'card', 'link', 'cashapp' ],
       // capture_method: "manual",
@@ -65,17 +66,89 @@ exports.ProductPayment = async (req, res, next) => {
         ProductName: Product.Product_Name,
         email: user.email,
         Role: user.Role,
-        
       },
-    } );
+    });
+    res.json({
+      clientSecret: paymentIntent.client_secret,
+      dpmCheckerLink: `https://dashboard.stripe.com/settings/payment_methods/review?transaction_id=${paymentIntent.id}`,
+      PaymentDetails: paymentOPtion,
+    });
+    //   console.log(paymentIntent);
+  } catch (error) {
+    console.log(error);
+    return RESPONSE_SENDER(res, 401, {});
+  }
+};
+
+exports.CartPayment = async (req, res, next) => {
+  const { cart } = req.body;
+
+  try {
+    const user = req.user;
+
+    if (!user || !cart) {
+      return RESPONSE_SENDER(res, 401, { message: "ProductPayment" });
+    }
+    const CartList = user.Cart.map((item) => {
+      return item.product_id;
+    });
+
+    const product = await ProductModle.aggregate([
+      { $match: { _id: { $in: CartList } } },
+      { $project: { Price: 1 } },
+    ]);
+
+
+
+    if (!product) {
+      return RESPONSE_SENDER(res, 401, {
+        message: "ProductPayment Product Not Found",
+      });
+    }
+
+const totalValue=product.reduce((value,acc)=>{
+  console.log(Number(acc.Price.MRP)-Number(acc.Price.MRP)*Number(acc.Price.Offer)/100)
+ return value+(Number(acc.Price.MRP)-Number(acc.Price.MRP)*Number(acc.Price.Offer)/100)
+},0)
+
+console.log(typeof(totalValue)+"       totalValue");
+
+    if (product) {
+      return RESPONSE_SENDER(res, 200, {
+        message: "ProductPayment Product Not Found",
+        product,
+        count: product.length,
+        totalValue
+      });
+    }
+
+    // const AmountWithDiscount = (Product.Price.MRP * Product.Price.Offer) / 100;
+    const paymentOPtion = {
+      amount: totalValue ,
+      currency: "inr",
+      description: `Cart List Items ${product.length}`,
+      automatic_payment_methods: { enabled: true },
+      // payment_method_types: [ 'card', 'link', 'cashapp' ],
+      // capture_method: "manual",
+      // application_fee_amount: 1000,
+      setup_future_usage: "off_session",
+      metadata: {
+        Name: user.userName,
+        ProductName:`Cart List Items ${product.length} ${"$ "+totalValue}` ,
+        email: user.email,
+        Role: user.Role,
+
+      },
+    };
+    const paymentIntent = await stripe.paymentIntents.create( paymentOPtion );
     res.json({
       clientSecret: paymentIntent.client_secret,
       dpmCheckerLink: `https://dashboard.stripe.com/settings/payment_methods/review?transaction_id=${paymentIntent.id}`,
       PaymentDetails:paymentOPtion
     });
-    //   console.log(paymentIntent);
+      console.log(paymentIntent);
   } catch (error) {
     console.log(error);
-return    RESPONSE_SENDER(res,401,{})
+    return RESPONSE_SENDER(res, 401, {});
   }
 };

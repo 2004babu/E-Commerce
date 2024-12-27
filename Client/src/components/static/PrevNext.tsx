@@ -1,4 +1,4 @@
-import React, { ButtonHTMLAttributes } from 'react'
+import React from 'react'
 
 interface typeContent {
     btnLenght?: number,
@@ -38,6 +38,7 @@ const PrevNext: React.FC<typeContent> = ({ btnLenght = 2,
         setC_number(t_number)
     }
     const specifyClick = (e:React.MouseEvent<HTMLButtonElement>,n:number) => {
+        console.log(n)
         // if (n >= t_number) {
         //     return
         // }

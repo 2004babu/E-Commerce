@@ -1,16 +1,17 @@
 import React from 'react'
-import { Link, redirect, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAuthContext } from '../../Context/authContextPrivider'
 import axios from 'axios'
 
 const SideBar: React.FC<{ open: boolean, isAdmin?: boolean, setOpen: (open: boolean) => void; }> = ({ open, isAdmin, setOpen }) => {
-  const { user, error, setUser, setError, successMSG, setSuccessMSG } = useAuthContext()
+  const { user, setUser, setError, setSuccessMSG } = useAuthContext()
 
   let login = false
   const locate = useLocation()
+  // const navigate=useNavigate()
   const handleLogout = async () => {
     try {
-      const apiurl =import.meta.env.VITE_API_URL;
+      const apiurl = import.meta.env.VITE_API_URL;
 
       const res = await axios.get(`${apiurl}/api/auth/logout`, { withCredentials: true })
 
@@ -22,9 +23,9 @@ const SideBar: React.FC<{ open: boolean, isAdmin?: boolean, setOpen: (open: bool
         userName: "",
         email: "",
         Role: "",
-        likes:[{product_id:''}],
-        Cart:[{product_id:""}]
-    })
+        likes: [{ product_id: '' }],
+        Cart: [{ product_id: "" }]
+      })
       setError('')
       setSuccessMSG("Succesfully Logout ")
       setOpen(false)
@@ -36,8 +37,11 @@ const SideBar: React.FC<{ open: boolean, isAdmin?: boolean, setOpen: (open: bool
 
     }
   }
-  console.log(locate);
   
+  console.log(locate);
+const handleLogin =()=>{
+  setOpen(false)
+}
   return (
     <div className="fixed top-0 z-10 w-screen bg-black-200/[0.2] h-screen  flex flex-row justify-start ">
 
@@ -49,8 +53,8 @@ const SideBar: React.FC<{ open: boolean, isAdmin?: boolean, setOpen: (open: bool
         <ul className='w-100 h-100 flex flex-col p-2 gap-6  text-lg justify-center items-start '>
           {user && user.Role === 'Admin' ? <Link to={'/dashboard'}><li onClick={() => setOpen(false)} className='flex flex-row gap-5 items-center justify-start'> <i className='fa-solid fa-heart'></i>Dashboard</li></Link> : null}
 
-          { locate.pathname==='/dashboard'&&<Link onClick={() => setOpen(false)} to={'/'}><li className='flex flex-row gap-5 items-center justify-start'> <i className='fa-solid fa-heart'></i>Home</li></Link>}   
-          
+          {locate.pathname === '/dashboard' && <Link onClick={() => setOpen(false)} to={'/'}><li className='flex flex-row gap-5 items-center justify-start'> <i className='fa-solid fa-heart'></i>Home</li></Link>}
+
           <Link onClick={() => setOpen(false)} to={'#'}><li className='flex flex-row gap-5 items-center justify-start '> <i className='fa-solid fa-user '></i>Profile</li></Link>
 
           <Link onClick={() => setOpen(false)} to={'/liked'}><li className='flex flex-row gap-5 items-center justify-start'> <i className='fa-solid fa-heart'></i>liked</li></Link>
@@ -59,8 +63,9 @@ const SideBar: React.FC<{ open: boolean, isAdmin?: boolean, setOpen: (open: bool
 
           <Link onClick={() => setOpen(false)} to={'#'}><li className='flex flex-row gap-5 items-center justify-start'><i className='fa-solid fa-clock-rotate-left'></i> Recent</li></Link>
 
-          <Link onClick={handleLogout} to={'#'}><li className='flex flex-row gap-5 items-center justify-start'> <i className='fa-solid fa-arrow-right'></i>logout</li></Link>
-        </ul>
+          {user._id ? <Link onClick={handleLogout} to={'#'}><li className='flex flex-row gap-5 items-center justify-start'> <i className='fa-solid fa-arrow-right'></i>logout</li></Link>
+            : <Link onClick={handleLogin} to={'/login'}><li className='flex flex-row gap-5 items-center justify-start'> <i className='fa-solid fa-arrow-right'></i>login</li></Link>
+          }        </ul>
       </div>
       <div onClick={() => setOpen(false)} className=' p-10 grow '> <i className='fa-solid fa-xmark  text-3xl'></i></div>
     </div>

@@ -2,12 +2,10 @@ import React, { useEffect, useState } from "react";
 import {
     useStripe,
     useElements,
-    CardNumberElement,
     PaymentElement,
-    CardElement,
 } from "@stripe/react-stripe-js";
 import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 
 
@@ -17,9 +15,9 @@ const StripePayments: React.FC = () => {
     const stripe = useStripe();
 
 
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
     const [clientSecret, setClientSecret] = useState<string>("");
-    const [paymentSuccess, setPAymentsuccess] = useState<boolean>(false);
+    // const [paymentSuccess, setPAymentsuccess] = useState<boolean>(false);
 
     const [dpmCheckerLink, setDpmCheckerLink] = useState<string>("");
 
@@ -59,7 +57,7 @@ const StripePayments: React.FC = () => {
                 console.error("Payment failed:", error);
             } else  {
                 console.log("Payment successful:");
-                setPAymentsuccess(true)
+                // setPAymentsuccess(true)
                 alert("Payment Successful!");
                 // navigate('/');
             }
@@ -73,24 +71,24 @@ const StripePayments: React.FC = () => {
 
     // Fetch client secret from the backend
 
-    useEffect(() => {
-        const getClientSecret = async () => {
-            try {
-                const apiUrl = import.meta.env.VITE_API_URL; // Backend API URL from .env
-                const response = await axios.post(
-                    `${apiUrl}/api/payment/product`,
-                    { amount, currency, PId: query.get('PId') },
-                    { withCredentials: true } // Include credentials for secure communication
-                );
-                setClientSecret(response.data.clientSecret);
-                setDpmCheckerLink(response.data.dpmCheckerLink)
-            } catch (error) {
-                console.error("Error fetching client secret:", error);
-            }
-        };
+    // useEffect(() => {
+    //     const getClientSecret = async () => {
+    //         try {
+    //             const apiUrl = import.meta.env.VITE_API_URL; // Backend API URL from .env
+    //             const response = await axios.post(
+    //                 `${apiUrl}/api/payment/product`,
+    //                 { amount, currency, PId: query.get('PId') },
+    //                 { withCredentials: true } // Include credentials for secure communication
+    //             );
+    //             setClientSecret(response.data.clientSecret);
+    //             setDpmCheckerLink(response.data.dpmCheckerLink)
+    //         } catch (error) {
+    //             console.error("Error fetching client secret:", error);
+    //         }
+    //     };
 
-        getClientSecret();
-    }, []);
+    //     getClientSecret();
+    // }, []);
 
     
 

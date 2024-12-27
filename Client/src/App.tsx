@@ -22,7 +22,6 @@ import DashComments from './components/Admin/DashBoard/DashComments';
 import Editable_Product from './components/Admin/Products/Editable_Product';
 import GateWayStripe from './components/Payments/GateWayStripe';
 import OrderPlacingPage from './components/OrderPalce/OrderPlacingPage';
-import { Elements } from '@stripe/react-stripe-js';
 import LoadCompletePage from './components/Payments/LoadCompletePage';
 
 

@@ -1,5 +1,4 @@
-import { promises } from 'dns'
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 interface typecategory {
     _id: string,

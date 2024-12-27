@@ -97,7 +97,7 @@ setFormData({...formData,[e.target.name]:e.target.value});
         <button type="submit" className="w-full bg-blue-500 text-white rounded p-2 hover:bg-blue-600 transition duration-200">
           Sign Up
         </button>
-        <Link to={'/login'}>Register</Link>
+        <Link className='text-blue-400 text-sm underline mt-2' to={'/login'}>login</Link>
 
       </form>
     </div>

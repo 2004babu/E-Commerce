@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from 'react'
+import React, { ReactNode } from 'react'
 import { useAuthContext } from '../../Context/authContextPrivider'
 import Home from '../pages/Home'
 import Login from '../auth/Login'

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { useAuthContext } from '../../../Context/authContextPrivider'
 import axios from 'axios'
 import FilterHeader from '../../static/FilterHeader'
@@ -12,8 +12,8 @@ const DashComments = () => {
 
     const [Product, setProduct] = useState<productType[]>([])
     const [page, setPage] = useState<number>(0)
-    const [haseMore, setHashMore] = useState<boolean>(true)
-    const { setError, user } = useAuthContext()
+    // const [haseMore, setHashMore] = useState<boolean>(true)
+    const { setError } = useAuthContext()
 
     interface openDEtype {
         id: string,
@@ -41,7 +41,7 @@ const DashComments = () => {
             }
 
             if (response?.data?.Product?.length < 10) {
-                setHashMore(false)
+                // setHashMore(false)
             }
 
 
@@ -96,7 +96,7 @@ const DashComments = () => {
                                     <Link to={'#'} className='text-blue-800 text-sm select-none cursor-pointer'>view More</Link>
                                 </div>
                                 <div className=' w-fit h- rounded-lg  '>
-                                    <img className='rounded-xl w-48 h-48 object-contain  ' src={item.imageUrl} alt="" />
+                                    <img className='rounded-xl w-48 h-48 object-contain  ' src={item.imageUrl[0]} alt="" />
                                 </div>
                                 <div className="flex flex-col p-2 justify-start h-full w-full items-center ">
                                     <div className='flex flex-row p-1 justify-between w-full items-start text-sm font-normal gap-3'>

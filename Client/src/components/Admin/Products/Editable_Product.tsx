@@ -91,17 +91,17 @@ const Editable_Product = () => {
       ]
     console.log('RomoveAlladd', addNewImage);
 
-    const fucSetRemovedAll = () => {
-        if (removedAll) {
-            console.log('enterd');
+    // const fucSetRemovedAll = () => {
+    //     if (removedAll) {
+    //         console.log('enterd');
 
-            setRemovedAll(false)
-            setProductDetails({ ...ProductDetails, imageUrl: [] })
-        } else {
-            console.log('not Entered');
+    //         setRemovedAll(false)
+    //         setProductDetails({ ...ProductDetails, imageUrl: [] })
+    //     } else {
+    //         console.log('not Entered');
 
-        }
-    }
+    //     }
+    // }
 
     const onDrop = useCallback((file: any[]) => {
         console.log('RomoveAll', removedAll);
@@ -147,7 +147,7 @@ setIsEdited(true)
                 const response = await axios.get(`${apiurl}/api/product/p/${(await query).get('id')}`, { withCredentials: true })
 
                 //this one for recent history session log///
-                const res = await axios.get(`${apiurl}/api/product/viewlog?viewId=${(await query).get('id')}`, { withCredentials: true })
+                 await axios.get(`${apiurl}/api/product/viewlog?viewId=${(await query).get('id')}`, { withCredentials: true })
 
 
                 if (response.data.product) {
@@ -279,10 +279,10 @@ setIsEdited(true)
     //         window.removeEventListener("popstate", handleNavigation);
     //     };
     // }, [isEdited]);
-    const btnFuc = (name: string) => {
-        console.log(name);
+    // const btnFuc = (name: string) => {
+    //     console.log(name);
 
-    }
+    // }
 
 
     ///input text appears "weird" or "different" and provide feedback
@@ -329,6 +329,7 @@ setIsEdited(true)
 
 
     const submitChanges = async (e: MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
         if (!isEdited)return
 
         // check data isEdit or Not by using index of our object value 
@@ -405,11 +406,11 @@ setIsEdited(true)
 
                     </div>
                     {ProductDetails.imageUrl.length > 1 ?
-                        <div className={`relative flex flex-row p-2 px-4 justify-between items-center gap-1 select-none ${removedAll ? 'opacity-20' : ''} `}>
+                        <div className={`relative flex h-96 flex-row p-2 px-4 justify-between items-center gap-1 select-none ${removedAll ? 'opacity-20' : ''} `}>
                             <i onClick={handleImageLeft} className='fa-solid fa-chevron-left w-10 bg-gray-200   px-1 py-3  flex justify-center items-center '></i>
 
-                            <div className="img w-80 bg-gray-900 h-96 min-[750px]:h-full">
-                                <img src={ProductDetails.imageUrl[ImageN] ?? "./image.png"} alt="product image" className='h-96 w-80 object-cover min-[750px]:h-full  ' />
+                            <div className="img w-80 h-96 rounded-lg  min-[750px]:h-full">
+                                <img src={ProductDetails.imageUrl[ImageN] ?? "./image.png"} alt="product image" className='h-96 w-80 object-contain object-center min-[750px]:h-full  ' />
                             </div>
                             {removedAll && <h1 className='absolute text-sm  top-[50%] right-[50%]'>opacity</h1>}
 

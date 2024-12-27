@@ -87,9 +87,17 @@ exports.getSingleProduct = async (req, res, next) => {
     if (!id) {
       return RESPONSE_SENDER(
         res,
-        301,
-        { product, message: "id Not Founde " },
+        201,
+        {  message: "id Not Founde " },
         { message: "id Not Founde " }
+      );
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return RESPONSE_SENDER(
+        res,
+        201,
+        {  message: "Product id not valid  " },
+        { message: "check url " }
       );
     }
 
@@ -98,8 +106,8 @@ exports.getSingleProduct = async (req, res, next) => {
     if (!product) {
       return RESPONSE_SENDER(
         res,
-        301,
-        { product, message: "Product Not Founde " },
+        200,
+        { product, message: "Product Not Found " },
         { message: "Product Not Founde " }
       );
     }
@@ -128,19 +136,17 @@ exports.filterProduct = async (req, res, next) => {
 
     let { category, search } = req.query;
 
-    
-
     const product = await ProductModel.find({
       // $and: [
-        // { 
-          category: { $regex: category, $options: "i" }
-        //  },
-        // {
-        //   $or: [
-        //     { Product_Name: { $regex: search, $options: "i" } },
-        //     { description: { $regex: search, $options: "i" } },
-        //   ],
-        // },
+      // {
+      category: { $regex: category, $options: "i" },
+      //  },
+      // {
+      //   $or: [
+      //     { Product_Name: { $regex: search, $options: "i" } },
+      //     { description: { $regex: search, $options: "i" } },
+      //   ],
+      // },
       // ],
     })
       .skip(skip)
@@ -171,8 +177,8 @@ exports.filterProductAdmin = async (req, res, next) => {
 
     let { category, search } = req.query;
 
-    if (category==="Choose") {
-      category=''
+    if (category === "Choose") {
+      category = "";
     }
     if (category === "AllProdunncts") {
       const product = await ProductModel.find({ Owner: user_id })
@@ -240,12 +246,9 @@ exports.viewLogProduct = async (req, res, next) => {
 
     const viewProduct = await ProductModel.findById(viewId);
 
-    const productview = viewProduct.viewedBy;
+    let productview = viewProduct.viewedBy;
 
-    //check is already watch list  ?
-    productview.forEach((item) => {
-      console.log(item.userId.toString() == user_id.toString());
-    });
+    
 
     if (
       productview.some((item) => {
@@ -260,7 +263,7 @@ exports.viewLogProduct = async (req, res, next) => {
           prod.log.push(Date.now());
           console.log("enter");
         }
-      });
+      });      
     } else {
       console.log("there not");
       productview.push({ userId: user_id });
@@ -934,18 +937,12 @@ exports.getRecentView = async (req, res, next) => {
       {
         $match: { "viewedBy.userId": new mongoose.Types.ObjectId(user_id) },
       },
-      { $skip: skip },
-      { $limit: limit },
-
-      //  { $project:{
-      //     _id:1,
-      //     imageUrl:1,
-      //     Product_Name:1,
-      //     viewedBy:1
-      //   }}
+      // { $skip: skip },
+      // { $limit: limit },
     ]);
 
-    // console.log(viewedProducts);
+   
+    
     return RESPONSE_SENDER(res, 200, {
       Count: viewedProducts.length,
       product: viewedProducts,
@@ -1066,14 +1063,41 @@ exports.editProducts = async (req, res, next) => {
   }
 };
 
-// exports.getProduct=async()=>{
-//     try {
+exports.getSuggest = async (req, res) => {
+  const { page = 0 } = req.query;
+  const limit = 10;
+  const skip = page > 0 ? page * limit : 0;
 
-//     } catch (error) {
-//         console.log(error);
-//         return RESPONSE_SENDER
-//     }
-// }
+  try {
+
+    const { search } = req.query;
+    const product = await ProductModel.aggregate([
+      {
+        $match: {
+          $or: [
+            { Product_Name: { $regex: search, $options: "i" } }, 
+            { description: { $regex: search, $options: "i" } } ,
+             {category:{$in:[search]}}
+          ]
+        }
+      },
+      {
+        $project: {
+          _id: 1, 
+          Product_Name: 1, 
+          description: 1, 
+          category:1
+        }
+      }
+    ]).skip(skip).limit(limit);
+    
+    
+    return RESPONSE_SENDER(res, 200, {count:product.length, product });
+  } catch (error) {
+    console.log(error);
+    return RESPONSE_SENDER(res,401,{message:'Error in autoSuggest '})
+  }
+};
 // exports.getProduct=async()=>{
 //     try {
 

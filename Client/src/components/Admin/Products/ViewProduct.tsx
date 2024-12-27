@@ -45,32 +45,45 @@ const ViewProduct = () => {
     const [isCart, setIsCart] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
     const [ImageN, setImageN] = useState<number>(0)
+    
+    const [clear, setClear] = useState<boolean>(false)
 
+     //relatedProducts
+
+     const [RelatedProduct, setRelatedProduct] = useState<productType[]>([])
+     const [Relatedpage, setRelatedpage] = useState<number>(0)
+     const [RelatedhasMore, setRelatedHaseMore] = useState<boolean>(true)
+ 
+
+    ///////recent  Products
+    const [page, setPage] = useState<number>(0)
+    const [ViewhasMore, setViewHaseMore] = useState<boolean>(true)
+    const [ViewProduct, setViewProduct] = useState<productType[]>([])
 
     useEffect(() => {
 
 
         fetchAll();
-
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-    }, [location.state])
+    }, [location.state])    
 
     const fetchProduct = async () => {
         try {
             const ProductId = (await query).get('id');
             if (!ProductId) {
-                setError('Check Url Product Id Not Foundor Wrong')
-                return
-            }
+              return  setError('Check Url Product Id Not Foundor Wrong')  
+                
+            }  
             const response = await axios.get(`${apiurl}/api/product/p/${ProductId}`, { withCredentials: true })
 
             //this one for recent history session log///
-            try {
-                await axios.get(`${apiurl}/api/product/viewlog?viewId=${ProductId}`, { withCredentials: true })
+            console.log(user._id)
+            if (user._id) {
+                try {
+                    await axios.get(`${apiurl}/api/product/viewlog?viewId=${ProductId}`, { withCredentials: true })    
 
-            } catch (error) {
-                console.log(error);
-
+                } catch (error) {        
+                    console.log(error);
+                }
             }
             console.log(response);
 
@@ -104,9 +117,13 @@ const ViewProduct = () => {
         } finally {
 
             setLoading(false)
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+
         }
     };
 
+    console.log(loading);
+    
 
     const handleShare = async () => {
 
@@ -128,6 +145,7 @@ const ViewProduct = () => {
     }
 
     // const handleRating = async (productId: string, userRate: number) => {
+
     //     console.log(productId);
     //     const apiurl = import.meta.env.VITE_API_URL
 
@@ -164,7 +182,7 @@ const ViewProduct = () => {
 
 
     ///comment section
-    const [clear, setClear] = useState<boolean>(false)
+ 
 
     const CommentSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -236,6 +254,8 @@ const ViewProduct = () => {
     const handleCart = async (productId: string) => {
 
         if (!productId) return
+        if (!user._id) return setError('login to use Cart Fun!!')
+
         try {
 
             const response = await axios.post(`${apiurl}/api/product/cart`, { productId }, { withCredentials: true })
@@ -286,15 +306,10 @@ const ViewProduct = () => {
         return <NotFound />
     }
 
-    ///////recent  Products
-    const [page, setPage] = useState<number>(0)
-    const [ViewhasMore, setViewHaseMore] = useState<boolean>(true)
-    const [ViewProduct, setViewProduct] = useState<productType[]>([])
-
 
     const fetchRecentView = async () => {
         try {
-
+            if (!user._id) return
             const response = await axios.get(`${apiurl}/api/product/getRecentView/?page=${page}`, { withCredentials: true })
             if (response.data.product) {
                 setViewProduct((prev) => [...prev, ...response.data.product]);
@@ -328,12 +343,7 @@ const ViewProduct = () => {
     </div>
 
 
-    //relatedProducts
-
-    const [RelatedProduct, setRelatedProduct] = useState<productType[]>([])
-    const [Relatedpage, setRelatedpage] = useState<number>(0)
-    const [RelatedhasMore, setRelatedHaseMore] = useState<boolean>(true)
-
+   
 
     const fetchRelatedProduct = async () => {
         const apiurl = import.meta.env.VITE_API_URL;
@@ -361,11 +371,11 @@ const ViewProduct = () => {
     }
     return (
         <>
-            {(!loading && ProductDetails._id) && <motion.div 
-             initial={{ opacity: 0, y: 50 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ duration: 0.5 }}
-            className='h-full w-full flex-col  hide-side-bar  min-[750px]:flex-row flex gap-2'>
+            {(!loading && ProductDetails._id) && <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className='h-full w-full flex-col  hide-side-bar  min-[750px]:flex-row flex gap-2'>
                 <div>
                     <div className="flex flex-row p-2 px-4 mt-[65px] h-[70px] w-full justify-between items-center border-b-2 border-gray-300">
                         <i onClick={() => navigate(location?.state?.from || '/')} className='fa-solid fa-arrow-left'></i>
@@ -376,11 +386,11 @@ const ViewProduct = () => {
                         </div>
                     </div>
                     {ProductDetails.imageUrl.length > 1 ?
-                        <div className="flex flex-row p-2 px-4 justify-between items-center gap-1 select-none ">
+                        <div className="flex flex-row h-96 p-2 px-4 justify-between items-center gap-1 select-none ">
                             <i onClick={handleImageLeft} className='fa-solid fa-chevron-left w-10 bg-gray-200   px-1 py-3  flex justify-center items-center '></i>
 
-                            <div className="img w-80 bg-gray-900 h-96 min-[750px]:h-full">
-                                <img src={ProductDetails.imageUrl[ImageN] ?? "./image.png"} alt="product image" className='h-96 w-80 object-cover min-[750px]:h-full  ' />
+                            <div className="img w-80 h-96 rounded-lg   min-[750px]:h-full">
+                                <img src={ProductDetails.imageUrl[ImageN] ?? "./image.png"} alt="product image" className='h-96 w-80 object-contain min-[750px]:h-full  ' />
                             </div>
 
                             <i onClick={handleImageRight} className='fa-solid fa-chevron-right w-10 bg-gray-200   px-1 py-3  flex justify-center items-center '></i>
@@ -416,13 +426,13 @@ const ViewProduct = () => {
                             <button onClick={() => handleCart(ProductDetails._id)} type="button" className="h-12 text-center bg-blue-400 rounded-md w-fit  px-3 py-2">Remove Cart </button>}
                         <button onClick={() => navigate(`/place-order/${ProductDetails._id}`)} type="button" className="h-12  text-center bg-yellow-400 rounded-md w-fit px-3 py-2 ">Buy Now</button>
                     </div>
-                    <CommentList CommentSubmit={CommentSubmit} handleThumpUp={handleThumpUp} handleThumpDown={handleThumpDown} clearCMTInput={clear} />
+                    <CommentList CommentSubmit={CommentSubmit} handleThumpUp={handleThumpUp} handleThumpDown={handleThumpDown} clearCMTInput={clear} ProductDetails={ProductDetails} />
                 </div>
             </motion.div>}
-            <RelatableProducts endMSG={listEndMSG} setRelatedProduct={setRelatedProduct} RelatedhasMore={RelatedhasMore} fetchRelatedProduct={fetchRelatedProduct} RelatedProduct={RelatedProduct} />
+            {!loading&&<RelatableProducts endMSG={listEndMSG} setRelatedProduct={setRelatedProduct} RelatedhasMore={RelatedhasMore} fetchRelatedProduct={fetchRelatedProduct} RelatedProduct={RelatedProduct} />}
 
-            <Recent_Products endMSG={listEndMSG} RecentProduct={ViewProduct} RecenthasMore={ViewhasMore} fetchRecentProduct={fetchRecentView} setRecentProduct={setViewProduct} />
-        </>
+            {user._id && <Recent_Products endMSG={listEndMSG} RecentProduct={ViewProduct} RecenthasMore={ViewhasMore} fetchRecentProduct={fetchRecentView} setRecentProduct={setViewProduct} />
+            }        </>
     )
 }
 

@@ -1,7 +1,7 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, {  useState } from 'react'
 import { useAuthContext } from '../../Context/authContextPrivider'
-import { Link, redirect, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 interface authInterface {
   email: string,
@@ -24,7 +24,7 @@ interface authInterface {
 const Login: React.FC = () => {
 
   // redirect('/')
-  const { setUser, user, error, setError, setSuccessMSG, asyncAfterAuthFuc, SetAsyncAfterAuthFuc } = useAuthContext();
+  const { setUser, error, setError, setSuccessMSG} = useAuthContext();
   const navigate = useNavigate()
 
   const location = useLocation()
@@ -104,7 +104,7 @@ const Login: React.FC = () => {
         <button type="submit" className="w-full bg-blue-500 text-white rounded p-2 hover:bg-blue-600 transition duration-200">
           Login
         </button>
-        <Link className='text-blue-400 text-sm' to={'/signup'}>Register</Link>
+        <Link className='text-blue-400 text-sm underline mt-2' to={'/signup'}>Register</Link>
       </form>
     </div>
   );

@@ -8,7 +8,7 @@ import { productType } from '../../utils/Types';
 
 interface ProductTableType { Re_path?: string, fetchProduct: () => (void), products: productType[], setProducts: Dispatch<SetStateAction<productType[]>>, hasMore: boolean }
 
-const ProductTable: React.FC<ProductTableType> = ({ Re_path, fetchProduct, products, setProducts, hasMore }) => {
+const ProductTable: React.FC<ProductTableType> = ({ Re_path, fetchProduct, products, hasMore }) => {
 
 
 
@@ -17,23 +17,23 @@ const ProductTable: React.FC<ProductTableType> = ({ Re_path, fetchProduct, produ
 
   const [inStock_icon, set_inStock_icon] = useState<boolean>(false)
   const [Price_icon, set_Price_icon] = useState<boolean>(false)
-  const [filteredPrduct, setFilteredProduct] = useState<productType[]>([])
+  // const [filteredPrduct, setFilteredProduct] = useState<productType[]>([])
 
 
 
   const handleStock = () => {
 
-    const sorted = products.sort((a, b) =>
+    // const sorted = products.sort((a, b) =>
 
-      Number(a.inStock) - Number(b.inStock)
-    )
+    //   Number(a.inStock) - Number(b.inStock)
+    // )
 
-    if (inStock_icon) {
-      setFilteredProduct(sorted.reverse());
+    // if (inStock_icon) {
+    //   setFilteredProduct(sorted.reverse());
 
-    } else {
-      setFilteredProduct(sorted);
-    }
+    // } else {
+    //   setFilteredProduct(sorted);
+    // }
 
     set_inStock_icon(!inStock_icon);
 
@@ -41,17 +41,17 @@ const ProductTable: React.FC<ProductTableType> = ({ Re_path, fetchProduct, produ
   }
   const handlePrice = () => {
 
-    const sorted = products.sort((a, b) =>
+    // const sorted = products.sort((a, b) =>
 
-      Number(a.Price) - Number(b.Price)
-    )
+    //   Number(a.Price) - Number(b.Price)
+    // )
 
-    if (Price_icon) {
-      setFilteredProduct(sorted.reverse());
+    // if (Price_icon) {
+    //   setFilteredProduct(sorted.reverse());
 
-    } else {
-      setFilteredProduct(sorted);
-    }
+    // } else {
+    //   setFilteredProduct(sorted);
+    // }
 
     set_Price_icon(!Price_icon);
 

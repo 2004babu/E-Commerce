@@ -1,6 +1,5 @@
-import React, { DetailsHTMLAttributes, FormEventHandler, useCallback, useRef, useState } from 'react'
+import React, {  useCallback,  useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import PrevNext from '../../static/PrevNext';
 import axios from 'axios';
 import { useAuthContext } from '../../../Context/authContextPrivider';
 // import pica from 'pica'
@@ -16,9 +15,8 @@ interface productType {
 }
 
 const AddProduct = () => {
-  const formRef = useRef<HTMLFormElement>(null)
 
-  const { setError, user } = useAuthContext()
+  const { setError } = useAuthContext()
 
   const [ProductDetails, setProductDetails] = useState<productType>({
     Product_Name: "",
@@ -88,11 +86,7 @@ const AddProduct = () => {
   // console.log(allBlobFile);
 
 
-  const [c_number, setC_number] = useState<number>(1)
   const [PictureN, setPictureN] = useState<number>(0)
-
-  // console.log(typeof allBlobFile[0]);
-
   const handlePictureNLess = () => {
     if (PictureN > 0) {
       setPictureN(PictureN - 1)
@@ -101,14 +95,12 @@ const AddProduct = () => {
     }
   }
   const handlePictureNPlus = () => {
-
     if (PictureN < (allBlobFile?.length || 0) - 1) {
       setPictureN(PictureN + 1)
     } else {
       setPictureN(0)
     }
   }
-
   //setProduct Details
 
   const changeHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,12 +110,12 @@ const AddProduct = () => {
   const selectHandler = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     setProductDetails({ ...ProductDetails, [e.target.name]: e.target.value });
   }
-
-
   ///removePic 
   const removePic = async () => {
     if (allBlobFile && allBlobFile?.length > 1) {
       const newAllBlop = allBlobFile?.filter((item, index) => {
+        console.log(item);
+        
         return index !== PictureN
       })
       setAllBlopFile(newAllBlop);
@@ -147,7 +139,6 @@ const AddProduct = () => {
   ///submit handler 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log('enter');
 
 
     const isAllString = Object.values(ProductDetails).filter(item => typeof item === 'string')
@@ -181,7 +172,7 @@ const AddProduct = () => {
       formData.append('Product_Image[]', allImages[0])
     } else {
       console.log('add images');
-      console.log(allImages);
+      setError('allImages');
 
 
       return setError('add Images ')
@@ -196,6 +187,19 @@ const AddProduct = () => {
       const response = await axios.post(`${apiurl}/api/product/addProduct`, formData, { withCredentials: true })
 
       console.log(response);
+      if (response?.data?.mapProduct) {
+        setProductDetails({
+          Product_Name: "",
+          MRP: "",
+          Offer: "",
+          inStock: "",
+          category: "",
+          description: ""
+        })
+        setAllBlopFile([]);
+        setAllImages([]);
+
+      }
     } catch (error) {
       console.log(error);
       setError((error as Error).message)
@@ -209,11 +213,11 @@ const AddProduct = () => {
 
   return (
     <div className='w-100 h-100 mt-[65px] p-3  '>
-      <h1>Products</h1>
+      <h1 className='text-md font-bold text-gray-800'>Products</h1>
       <div className='flex flex-row max-[700px]:flex-col p-2 gap-3  '>
         <div className=" flex flex-col  p-2 justify-start items-center min-h-fit grow flex-nowrap  border-2 border-gray-300 ">
           <div className="flex flex-col justify-start p-2 grow items-start  rounded-2 relative overflow-hidden w-full ">
-            <h1>Products Images </h1>
+            <h1 className='text-md font-bold text-gray-700'>Products Images </h1>
             <div className='flex flex-row justify-between items-center p-0 w-full '>
               {allBlobFile && allBlobFile.length > 1 ? <>
                 <i onClick={handlePictureNLess} className="fa-solid fa-chevron-left text-lg hover:bg-gray-200 px-2 py-1"></i>
@@ -229,7 +233,7 @@ const AddProduct = () => {
             </div>
             <div {...getRootProps()} className=' w-full rounded-lg bg-gray-300  h-16  flex items-center  mt-2 justify-center'>
               <input {...getInputProps()} />
-              <p > select more Files </p>
+              <p className='text-md font-bold text-gray-900' > select more Files </p>
               {isDragActive ? (
 
                 <div className="absolute w-full rounded-lg  h-full top-0 bg-gray-300 flex items-center justify-center opacity-75 text-gray-700 font-bold">
@@ -241,9 +245,9 @@ const AddProduct = () => {
             <div className="w-full items-center flex justify-center">
 
               <div className="flex flex-row gap-2 justify-between p-2">
-                <button form={"formRef"} type='submit' className='bg-blue-300 rounded-md outline-none border-none px-3 py-2 '> Submit All </button>
-                <button className='bg-blue-300 rounded-md outline-none border-none px-3 py-2 ' onClick={removeAllPic}>Remove All </button>
-                <button className='bg-blue-300 rounded-md outline-none border-none px-3 py-2' onClick={removePic}>Remove this </button>
+                <button form={"formRef"} type='submit' className='bg-blue-600 rounded-md outline-none border-none px-2 py-1 '> Submit All </button>
+                <button className='bg-blue-600 rounded-md outline-none border-none px-2 py-1 ' onClick={removeAllPic}>Remove All </button>
+                <button className='bg-blue-600 rounded-md outline-none border-none px-2 py-1' onClick={removePic}>Remove this </button>
               </div>
             </div>
           </div>
@@ -253,27 +257,27 @@ const AddProduct = () => {
             <div className='flex flex-col gap-1    h-fit  '>
 
               <label htmlFor="Product_Name">Product_Name</label>
-              <input onChange={changeHandler} type="text" className='rounded-md px-3 py-2 mt-2' name="Product_Name" id="Product_Name" />
+              <input onChange={changeHandler} value={ProductDetails.Product_Name} type="text" required className='rounded-md px-3 py-2 mt-2' name="Product_Name" id="Product_Name" />
             </div>
             <div className='flex flex-col  h-fit  '>
               <label htmlFor="MRP">MRPrice</label>
-              <input onChange={changeHandler} type="number" className='rounded-md px-3 py-2 mt-2' name="MRP" id="MRP" />
+              <input onChange={changeHandler} value={ProductDetails.MRP} type="number" required className='rounded-md px-3 py-2 mt-2' name="MRP" id="MRP" />
             </div>
             <div className='flex flex-col  h-fit   '>
               <label htmlFor="Offer">Offer</label>
-              <input onChange={changeHandler} type="number" className='rounded-md px-3 py-2 mt-2' name="Offer" id="Offer" />
+              <input onChange={changeHandler} value={ProductDetails.Offer} type="number" required className='rounded-md px-3 py-2 mt-2' name="Offer" id="Offer" />
             </div>
             <div className='flex flex-col  h-fit  '>
 
               <label htmlFor="inStock">
                 inStock
               </label>
-              <input onChange={changeHandler} type="number" className='rounded-md px-3 py-2 mt-2' name="inStock" id="inStock" />
+              <input onChange={changeHandler} value={ProductDetails.inStock} type="number" required className='rounded-md px-3 py-2 mt-2' name="inStock" id="inStock" />
             </div>
             <div className='flex flex-col  h-fit  '>
 
               <label htmlFor="category">category</label>
-              <select onChange={selectHandler} name="category" className='rounded-md px-3 py-2 mt-2' id="category"  >
+              <select onChange={selectHandler} name="category" value={ProductDetails.category} required className='rounded-md px-3 py-2 mt-2' id="category"  >
                 {catogeryEnnum.map((item, index) => (
                   <option key={index} value={item}>{item}</option>))
                 }
@@ -282,7 +286,7 @@ const AddProduct = () => {
             <div className='flex flex-col  h-fit  '>
 
               <label htmlFor="description">description</label>
-              <input onChange={changeHandler} type="text" className='rounded-md px-3 py-2 mt-2' name="description" id="description" />
+              <input onChange={changeHandler} value={ProductDetails.description} type="text" required className='rounded-md px-3 py-2 mt-2' name="description" id="description" />
             </div>
 
           </form>

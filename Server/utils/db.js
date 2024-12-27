@@ -6,7 +6,8 @@ const connectMongo =async ()=>{
         console.log(process.env.MONGO_URL);
         if(!process.env.MONGO_URL)console.log
         ('mongoURL not Fund!')
-        await mongoose.connect(process.env.MONGO_URL)
+        await mongoose.connect(process.env.MONGO_URL).then(()=>{console.log('Connect Succes');
+        })
     } catch (error) {
         console.log(error);   
     }

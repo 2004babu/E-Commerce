@@ -23,13 +23,10 @@ const {
   AddAndRemoveLikeProduct,
   viewLogProduct,
   filterProductAdmin,
+  getSuggest,
 } = require("../Controllers/Product.Controller.js");
 const isAdmin = require("../utils/isAdmin.js");
 
-const Stripe = require("stripe");
-const stripe = new Stripe(
- process.env.STRIPE_SECRET_KEY
-);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -43,32 +40,28 @@ const storage = multer.diskStorage({
 const image = multer({ storage });
 
 router.get("/p/:id", getSingleProduct);
-router.post(
-  "/addProduct",
-  isAuthendicatedUser,
-  isAdmin,
-  image.array("Product_Image[]", 10),
-  addProduct
-);
-router.get("/allproduct", isAuthendicatedUser, isAdmin, AllProducts);
+router.get("/autosuggest", getSuggest);
 router.get("/filter", filterProduct);
-router.get("/admin/filter",isAuthendicatedUser,isAdmin, filterProductAdmin);
+router.get("/getRelatedProducts", getRelatedProducts);
+
 router.get("/viewlog", isAuthendicatedUser, viewLogProduct);
 router.get("/addLike", isAuthendicatedUser, AddAndRemoveLikeProduct);
 router.get("/liked/:id", isAuthendicatedUser, likedProduct);
-router.patch("/rating", isAuthendicatedUser, rateProduct);
-router.post("/comment", isAuthendicatedUser, addComment);
-router.patch("/comment/like", isAuthendicatedUser, likeComment);
-router.post("/cart", isAuthendicatedUser, cartProduct);
 router.get("/cart", isAuthendicatedUser, getCartProduct);
 router.get("/getRecentView", isAuthendicatedUser, getRecentView);
 
-router.get("/getRelatedProducts", getRelatedProducts);
+router.post("/comment", isAuthendicatedUser, addComment);
+router.post("/cart", isAuthendicatedUser, cartProduct);
+
+router.patch("/rating", isAuthendicatedUser, rateProduct);
+router.patch("/comment/like", isAuthendicatedUser, likeComment);
+
+router.post("/addProduct",isAuthendicatedUser,isAdmin,image.array("Product_Image[]", 10),  addProduct);
 router.patch("/edit", isAuthendicatedUser, isAdmin, editProducts);
+router.get("/allproduct", isAuthendicatedUser, isAdmin, AllProducts);
+router.get("/admin/filter", isAuthendicatedUser, isAdmin, filterProductAdmin);
 
 router.get("/admin/comments", isAuthendicatedUser, isAdmin, getAdminComments);
-
-
 
 module.exports = router;
 

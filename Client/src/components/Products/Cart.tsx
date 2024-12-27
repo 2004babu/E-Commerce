@@ -1,16 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ListProducts from './ListProducts'
 import axios from 'axios'
 import { useAuthContext } from '../../Context/authContextPrivider'
 import RelatableProducts from '../Admin/Products/RelatableProducts'
 import Recent_Products from '../Admin/Products/Recent_Products'
-import { redirect, useNavigate } from 'react-router-dom'
+import {  useNavigate } from 'react-router-dom'
 // import InfiniteScroll from 'react-infinite-scroller'
 
 import { productType } from '../utils/Types'
 
 const Cart = () => {
 
+    const {setError,  user } = useAuthContext()
+  
 
   const navigate=useNavigate()
   const [hasMore, setHaseMore] = useState<boolean>(true)
@@ -26,8 +28,12 @@ const Cart = () => {
 
   const [Product, setProduct] = useState<productType[]>([])
   const apiurl = import.meta.env.VITE_API_URL
-  const { setError } = useAuthContext()
   useEffect(() => {
+
+    if (!user._id) {
+      return setError('Con`t Access cart without login !!')
+    }
+
     fetchCart()
     fetchRecentView()
     fetchRelatedProduct()
@@ -132,14 +138,14 @@ const Cart = () => {
   const listEndMSG: React.ReactNode = <div onClick={handleViewAll} className=' w-48 h-[300px] flex  justify-center items-center '>
     <div className='bg-gray-400 p-3 rounded-full flex  justify-center items-center gap-3'>
       <i className='fa-solid fa-arrow-right'></i>
-      view all
+      view Other
     </div>
   </div>
   //this one For cart end msg to viewmore Products
   const cartEndMSG: React.ReactNode = <div onClick={()=>navigate('/',{state:{msg:"from cart"}})} className='ms-3 select-none cursor-pointer w-fit h-[300px] flex  justify-center items-center '>
     <div className='bg-gray-400 p-3 rounded-full flex  justify-center items-center gap-3'>
       <i className='fa-solid fa-arrow-right'></i>
-      view all
+      view other
     </div>
   </div>
 

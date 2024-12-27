@@ -1,8 +1,8 @@
 const userModel = require("../Models/user.model");
-const bcrybt = require("bcrypt");
 const setJWTToken = require("../utils/jwt_token");
 const jwt = require("jsonwebtoken");
 const { RESPONSE_SENDER } = require("../utils/RESPONSE_SENDER");
+const bcrypt = require("bcryptjs"); // Replace bcrypt with bcryptjs
 
 exports.loginUser = async (req, res, next) => {
   try {
@@ -10,26 +10,63 @@ exports.loginUser = async (req, res, next) => {
     console.log(email, password);
 
     if (!email || !password) {
-      return RESPONSE_SENDER(res, 401, { message: "fill the value " });
+      return RESPONSE_SENDER(res, 401, { message: "Fill the value" });
     }
 
     const user = await userModel.findOne({ email }).select("+password");
 
     if (!user) {
-      return RESPONSE_SENDER(res, 401, { message: "user Not Found " });
+      return RESPONSE_SENDER(res, 401, { message: "User not found" });
     }
 
     console.log(password, user);
 
-    const validPassword = await bcrybt.compare(password, user.password);
+    const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
-      return RESPONSE_SENDER(res, 401, { message: "password doesnot match! " });
+      return RESPONSE_SENDER(res, 401, { message: "Password does not match!" });
     }
 
     setJWTToken(res, 200, user);
   } catch (error) {
     console.log(error);
+    return RESPONSE_SENDER(res, 500, { message: "Internal Server Error" });
+  }
+};
+
+exports.signUp = async (req, res, next) => {
+  try {
+    console.log(req.body);
+    const { userName, email, password, c_password } = req.body;
+
+    if (!userName || !email || !password || !c_password) {
+      return RESPONSE_SENDER(res, 300, {
+        message: "Fill the value of inputs!",
+      });
+    }
+
+    if (password !== c_password) {
+      return RESPONSE_SENDER(res, 300, {
+        message: "Passwords do not match! Check your password.",
+      });
+    }
+
+    let new_password = await bcrypt.hash(password, 10); // Use bcryptjs hash method
+    console.log(new_password);
+
+    let userDetail = {
+      userName,
+      email,
+      password: new_password,
+    };
+
+    const user = await userModel.create(userDetail);
+    console.log(user);
+
+    setJWTToken(res, 200, user);
+  } catch (error) {
+    console.log(error);
+    return RESPONSE_SENDER(res, 300, { message: error.message });
   }
 };
 
@@ -68,39 +105,6 @@ exports.loaduser = async (req, res, next) => {
   }
 };
 
-exports.signUp = async (req, res, next) => {
-  try {
-    console.log(req.body);
-    const { userName, email, password, c_password } = req.body;
-    if (!userName || !email || !password || !c_password) {
-      return RESPONSE_SENDER(res, 300, {
-        message: "Fill The Value Of inputs!",
-      });
-    }
-
-    
-    if (password !== c_password) {
-      return RESPONSE_SENDER(res, 300, {
-        message: "password doean't match! check password",
-      });
-    }
-
-    let new_password = await bcrybt.hash(password, 10);
-    console.log(new_password);
-    let userDetail = {
-      userName,
-      email,
-      password: new_password,
-    };
-    const user = await userModel.create(userDetail);
-    console.log(user);
-
-    setJWTToken(res, 200, user);
-  } catch (error) {
-    console.log(error);
-    return RESPONSE_SENDER(res, 300, { message: error.message });
-  }
-};
 
 ////////////////////////
 

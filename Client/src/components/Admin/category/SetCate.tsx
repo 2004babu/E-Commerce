@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { useEffect, useRef, useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAuthContext } from '../../../Context/authContextPrivider';
 import RowCategory from './RowCategory';
 
@@ -26,12 +25,12 @@ const SetCate = () => {
     const { setError } = useAuthContext()
 
     const [page, setPage] = useState<number>(1); 
-    const [hasMore, setHasMore] = useState<boolean>(true);
+    // const [hasMore, setHasMore] = useState<boolean>(true);
 
     const [category, setCategory] = useState<typecategory[]>([])
     const [individualCategory, setindividualCategory] = useState<getIndividualtypecate[]>([])
 
-    const [rowCatepage, setRowCatePage] = useState<number>(0)
+    // const [rowCatepage, setRowCatePage] = useState<number>(0)
 
 
     useEffect(() => {
@@ -50,6 +49,8 @@ const SetCate = () => {
                 // /?page=${page}
                 cancelToken: new axios.CancelToken(c => cancel = c)
             })
+            console.log(cancel);
+            
             if (response.data.category) {
                 setCategory((prev) => [...prev, ...response.data.category]);
                 response.data.category.forEach((item: getIndividualtypecate) => {
@@ -57,7 +58,7 @@ const SetCate = () => {
                 })
                 setPage(page + 1)
                 if (response.data.category.length === 0) {
-                    setHasMore(false);
+                    // setHasMore(false);
                 }
             }
             console.log(response);

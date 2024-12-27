@@ -6,7 +6,7 @@ const dotenv =require('dotenv')
 const cookieParser=require('cookie-parser')
 
 
-dotenv.config({path:path.join(__dirname,'./.local.env')})
+dotenv.config({path:path.join(__dirname,'./.env')})
 
 const authRoute =require('./Routers/auth.route.js')
 const productsRoute =require('./Routers/Product.route.js')
@@ -14,7 +14,7 @@ const categoryRoute =require('./Routers/category.route.js')
 const PaymentRoute =require('./Routers/Payment.route.js')
 const connectMongo = require('./utils/db.js')
 
-app.use(cors({origin:'http://localhost:5173',credentials:true,methods:["POST",'GET','PATCH','DELETE']}))
+app.use(cors({origin:true,credentials:true,methods:["POST",'GET','PATCH','DELETE']}))
 app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}))
@@ -31,6 +31,13 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ message: 'Internal Server Error' });
   });
+
+  app.use(express.static(path.join(__dirname,'../Client/dist')))
+  app.use(express.static(path.join(__dirname,'../Client/dist/index.html')))
+
+app.get('/',(req,res)=>{
+  res.sendFile(path.join(__dirname,'../Client/dist/index.html'))
+})
   
 const PORT =process.env.PORT||9000
 app.listen(PORT,()=>{
