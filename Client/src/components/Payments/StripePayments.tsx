@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import {
     useStripe,
     useElements,
     PaymentElement,
 } from "@stripe/react-stripe-js";
-import axios from "axios";
-import { useLocation } from "react-router-dom";
 
 
 
@@ -16,25 +14,25 @@ const StripePayments: React.FC = () => {
 
 
     // const navigate = useNavigate()
-    const [clientSecret, setClientSecret] = useState<string>("");
+    // const [clientSecret, setClientSecret] = useState<string>("");
     // const [paymentSuccess, setPAymentsuccess] = useState<boolean>(false);
 
-    const [dpmCheckerLink, setDpmCheckerLink] = useState<string>("");
+    // const [dpmCheckerLink, setDpmCheckerLink] = useState<string>("");
 
 
     const [loading, setLoading] = useState<boolean>(false);
     const amount = 100; // Amount in your preferred currency's smallest unit (e.g., cents for USD)
-    const currency = "usd"; // Preferred currency
+    // const currency = "usd"; // Preferred currency
 
-    const useQuery = () => {
-        return new URLSearchParams(useLocation().search)
-    }
+    // const useQuery = () => {
+    //     return new URLSearchParams(useLocation().search)
+    // }
 
-    const query = useQuery()
+    // const query = useQuery()
 
     const handlePayment = async (event:React.FormEvent<HTMLFormElement>  ) => {
         event.preventDefault()
-        console.log(dpmCheckerLink, clientSecret)
+        // console.log(dpmCheckerLink, clientSecret)
         if (!stripe || !elements) {
             console.error("Stripe or Elements not loaded");
             return;

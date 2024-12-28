@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
-import axios, { isCancel } from 'axios'
+import axios from 'axios'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import StripePayments from './StripePayments'
 import { useAuthContext } from '../../Context/authContextPrivider'
