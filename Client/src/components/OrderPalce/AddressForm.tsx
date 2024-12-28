@@ -23,19 +23,32 @@ const AddressForm: React.FC<AddressFormProps> = ({  prevStep }) => {
   const navigate=useNavigate()
   
       const [isWrongUrl, setIsWrongUrl] = useState<boolean>(false);
-  let cart:boolean= false 
-  const { productId } = useParams()
-  const useQuery=async()=>{
-        
-    const location = useLocation();
-    const query = new URLSearchParams(location.search);
-    console.log(query.get('cart'));  
-       query.get('cart')==='true' ? cart=true :cart=false
-       if (!productId&&!(query.get('cart')==='true')) {
-        setIsWrongUrl(true)
-       }
-  }
+      const [cart, setCart] = useState(false);
+      const { productId } = useParams()
+     
+    
+      const location = useLocation();
+
+  useEffect(() => {
   
+    
+    const query = new URLSearchParams(location.search);
+    const cartQuery = query.get('cart');
+    setCart(cartQuery === 'true');
+
+    // Check for URL validity
+    if (!productId && cartQuery !== 'true') {
+      setIsWrongUrl(true);
+    }
+
+  
+    // Load shipping info from localStorage if exists
+    const storedShippingInfo = localStorage.getItem("shippingInfoE_com");
+    if (storedShippingInfo) {
+      setAddress(JSON.parse(storedShippingInfo));
+    }
+  }, []);
+  console.log(cart)
   
   const [address, setAddress] = useState<AddressType>({
     name: "",
@@ -53,21 +66,6 @@ const {setError}=useAuthContext()
     setAddress({ ...address, [e.target.name]: e.target.value });
   };
 
-  useEffect(() => {
-
-    
-        if (isWrongUrl) {
-          setError('Check Url Product Id Not Foundor Wrong')
-          return
-        }
-    useQuery()
-
-    // Load shipping info from localStorage if exists
-    const storedShippingInfo = localStorage.getItem("shippingInfoE_com");
-    if (storedShippingInfo) {
-      setAddress(JSON.parse(storedShippingInfo));
-    }
-  }, []);
 
   useEffect(() => {
     // Validate fields to enable/disable the next button

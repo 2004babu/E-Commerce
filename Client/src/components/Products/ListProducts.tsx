@@ -26,7 +26,7 @@ interface listType {
 
 
 
-const ListProducts: React.FC<listType> = ({ refer, parentEl, className, Product, setProduct, scrollFunc, haseMore, likeShare = true, Rating = true, children, endMSG }) => {
+const ListProducts: React.FC<listType> = ({ refer, parentEl, className, Product, setProduct, scrollFunc, haseMore, likeShare = true, Rating = true, children }) => {
 
     // const [isFirstToLast, setIsFirstToLast] = useState<boolean>(true)
     // const [isAToZ, setIsAToZ] = useState<boolean | undefined>(undefined)
@@ -192,12 +192,12 @@ console.log(e);
             scrollableTarget={refer ? refer : parentEl}
 
             loader={<h1>loading</h1>}
-            endMessage={endMSG ?? <div className='text-md font-bold text-black'>no value</div>}
+            // endMessage={endMSG ?? <div className='text-md font-bold text-black'>no value</div>}
 
         >
 
 
-            {filteredProduct && filteredProduct.length > 0 ? filteredProduct.map((item, index) => (
+            {(filteredProduct && filteredProduct.length > 0)&&filteredProduct[0]?.Product_Name ? filteredProduct.map((item, index) => (
                 <div  onClick={(e) => handleOpen(e, item._id)} key={index} className="flex flex-col p-1 gap-1 justify-center items-start relative ">
                     {(likeShare) && <div className="w-10 h-10 px-2 py-1 text-md absolute top-0 right-0">
                         {(item?.likedBy && item?.likedBy?.some(value => value?.userId.toString() === user._id.toString())) ?
@@ -210,9 +210,9 @@ console.log(e);
                     <div key={index} className='h-60 max-[465px]:h-48 max-[465px]:w-40 w-56 '>
                         <img src={item?.imageUrl?.length ? item.imageUrl[0] : "./image.png"} loading='lazy'  alt={` ${item.Product_Name} category photo`} className='h-60 max-[465px]:h-48 max-[465px]:w-40 w-56 max-[465px]:object-contain object-contain' />
                     </div>
-                    <h1  className='font-bold text-lg'>{item.Product_Name.substring(0, 15)}</h1>
+                    <h1  className='font-bold text-lg'>{item.Product_Name?.substring(0, 15)}</h1>
                     <div className="flex flex-col items-start justify-center gap-1 p-1 text-md">
-                        <span className='font-bold text-lg' >{"₹" +Math.round(Number(item.Price.MRP)- Number(item.Price.MRP) * Number(item.Price.Offer) / 100)}</span>
+                        <span className='font-bold text-lg' >{"₹" +Math.round(Number(item?.Price.MRP)- Number(item.Price.MRP) * Number(item.Price.Offer) / 100)}</span>
                         <div className='flex flex-row gap-2'>
                             <span className=' font-semibold  line-through text-sm text-gray-600 flex'>{"₹" + Number(item.Price.MRP)} </span>
                             <p className='ms-5 text-sm font-medium  text-green-600'>{"%  " + item.Price.Offer + "  off"}</p>

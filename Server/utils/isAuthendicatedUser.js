@@ -10,7 +10,7 @@ module.exports = async (req, res, next) => {
     if (!babu) {
       return RESPONSE_SENDER(
         res,
-        401,
+        200,
         { message: "error in isAuthendicated user" },
         { message: "your Not Authorized Person ,cookie Expired!" }
       );
@@ -24,7 +24,7 @@ module.exports = async (req, res, next) => {
     if (!id) {
       return RESPONSE_SENDER(
         res,
-        401,
+        200,
         { message: "error in isAuthendicated user cookie Expires" },
         { message: "your Not Authorized Person ,cookie not Found!" }
       );
@@ -34,7 +34,7 @@ module.exports = async (req, res, next) => {
     if (!user) {
       return RESPONSE_SENDER(
         res,
-        401,
+        200,
         { message: "error in isAuthendicated user User Not Found" },
         { message: "your Not Authorized Person ,user not Found!" }
       );
@@ -47,7 +47,7 @@ module.exports = async (req, res, next) => {
     console.log(error);
     return RESPONSE_SENDER(
       res,
-      401,
+      200,
       { message: "error in isAuthendicated user", error },
       { message: "your Not Authorized Person" }
     );

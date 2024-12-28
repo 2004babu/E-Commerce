@@ -61,7 +61,7 @@ const handleLogin =()=>{
 
           <Link onClick={() => setOpen(false)} to={'/cart'}><li className='flex flex-row gap-5 items-center justify-start'><i className='fa-solid fa-cart-shopping'></i>Cart</li></Link>
 
-          <Link onClick={() => setOpen(false)} to={'#'}><li className='flex flex-row gap-5 items-center justify-start'><i className='fa-solid fa-clock-rotate-left'></i> Recent</li></Link>
+          <Link onClick={() => setOpen(false)} to={'/product/recent'}><li className='flex flex-row gap-5 items-center justify-start'><i className='fa-solid fa-clock-rotate-left'></i> Recent</li></Link>
 
           {user._id ? <Link onClick={handleLogout} to={'#'}><li className='flex flex-row gap-5 items-center justify-start'> <i className='fa-solid fa-arrow-right'></i>logout</li></Link>
             : <Link onClick={handleLogin} to={'/login'}><li className='flex flex-row gap-5 items-center justify-start'> <i className='fa-solid fa-arrow-right'></i>login</li></Link>

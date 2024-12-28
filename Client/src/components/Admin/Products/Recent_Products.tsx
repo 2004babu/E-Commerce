@@ -3,6 +3,7 @@ import ListProducts from '../../Products/ListProducts'
 
 import { productType } from '../../utils/Types' 
 import { useAuthContext } from '../../../Context/authContextPrivider'
+import Loading from '../../static/Loading'
 
 
 interface RecentPTtype {
@@ -51,9 +52,8 @@ const Recent_Products: React.FC<RecentPTtype> = ({
                 {children??null}
                 </ListProducts> :
                 // if list is empty then get random Products
-                <div className="flex flex-col w-full p-3 font-bold text-xl h-80 text-gray-500">
-                    random fetch will be Add
-                </div>
+                <div className='h-screen w-screen flex justify-center items-center '>  <Loading />
+            </div>
             }
         </div>
     )

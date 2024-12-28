@@ -36,6 +36,17 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    const isValidEmail = (email:string) => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Standard regex for email validation
+      return emailRegex.test(email);
+    };
+    
+    
+    if (formData.password.length<6||!isValidEmail(formData.email)) {
+      setError
+      ('Check password and email!!')
+      return
+    }
     try {
       const apiurl = import.meta.env.VITE_API_URL;
 
@@ -52,7 +63,7 @@ const Login: React.FC = () => {
 
 
       if (location.state.from) {
-        return navigate(location.state.from)
+        return navigate(location?.state?.from)
       }
       // redirect('/')
 

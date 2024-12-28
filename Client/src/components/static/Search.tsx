@@ -63,7 +63,7 @@ const Search: React.FC<searchContent> = ({ search, setSearch }) => {
     console.log();
     e.preventDefault()
 
-    return navigate(`/product/category?q=${catogeryEnnum[0]}`)
+    return navigate(`${catogeryEnnum[NavigateIndex]._id ? `/product?id=${catogeryEnnum[NavigateIndex]._id }` : `/product/category?q=${catogeryEnnum[NavigateIndex].category}`}`)
   }
   const searchREF = useRef<HTMLInputElement | null>(null)
 
@@ -84,7 +84,7 @@ const Search: React.FC<searchContent> = ({ search, setSearch }) => {
 
   const listUlElement = useRef<HTMLUListElement | null>(null)
 
-  const abortControllerRef=useRef<AbortController|null>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
 
   const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -101,12 +101,13 @@ const Search: React.FC<searchContent> = ({ search, setSearch }) => {
   const fetchSearch = async (searchItems: string = search, PageIndex: number = page) => {
     try {
 
-      if(abortControllerRef.current)  abortControllerRef.current.abort('new Search Initiated !!')
+      if (abortControllerRef.current) abortControllerRef.current.abort('new Search Initiated !!')
 
-        abortControllerRef.current=new AbortController();
-      const resposne = await axios.get(`${apiurl}/api/product/autosuggest`,{
-        params:{search:searchItems,page:PageIndex},
-        signal:abortControllerRef.current.signal})
+      abortControllerRef.current = new AbortController();
+      const resposne = await axios.get(`${apiurl}/api/product/autosuggest`, {
+        params: { search: searchItems, page: PageIndex },
+        signal: abortControllerRef.current.signal
+      })
 
       if (resposne?.data?.product) {
         setCategoryEnnum((prev) => [...prev, ...resposne?.data?.product])
@@ -118,57 +119,58 @@ const Search: React.FC<searchContent> = ({ search, setSearch }) => {
         }
       }
     } catch (error) {
-      if((error as Error).name==='AbortError') {
-          console.log('Request aborted:');
-        
+      if ((error as Error).name === 'AbortError') {
+        console.log('Request aborted:');
+
       }
       console.log(error);
     }
   }
 
-//   const cancelTokenRef = useRef<CancelTokenSource | null>(null);
+  //   const cancelTokenRef = useRef<CancelTokenSource | null>(null);
 
-// const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-//   setSearch(e.target.value);
-//   setCategoryEnnum([]); // Clear previous results
-//   setPage(0); // Reset page index
-//   fetchSearch(e.target.value, 0);
-// };
+  // const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+  //   setSearch(e.target.value);
+  //   setCategoryEnnum([]); // Clear previous results
+  //   setPage(0); // Reset page index
+  //   fetchSearch(e.target.value, 0);
+  // };
 
-// const fetchSearch = async (searchItems: string = search, PageIndex: number = page) => {
-//   try {
-//     // Cancel any ongoing request before starting a new one
-//     if (cancelTokenRef.current) {
-//       cancelTokenRef.current.cancel('Request cancelled due to a new search input');
-//     }
+  // const fetchSearch = async (searchItems: string = search, PageIndex: number = page) => {
+  //   try {
+  //     // Cancel any ongoing request before starting a new one
+  //     if (cancelTokenRef.current) {
+  //       cancelTokenRef.current.cancel('Request cancelled due to a new search input');
+  //     }
 
-//     // Create a new cancel token
-//     cancelTokenRef.current = axios.CancelToken.source();
+  //     // Create a new cancel token
+  //     cancelTokenRef.current = axios.CancelToken.source();
 
-//     const response = await axios.get(`${apiurl}/api/product/autosuggest`, {
-//       params: { search: searchItems, page: PageIndex },
-//       cancelToken: cancelTokenRef.current.token, // Attach cancel token to the request
-//     });
+  //     const response = await axios.get(`${apiurl}/api/product/autosuggest`, {
+  //       params: { search: searchItems, page: PageIndex },
+  //       cancelToken: cancelTokenRef.current.token, // Attach cancel token to the request
+  //     });
 
-//     console.log(response.data.product);
+  //     console.log(response.data.product);
 
-//     if (response?.data?.product) {
-//       setCategoryEnnum((prev) => [...prev, ...response?.data?.product]);
-//       if (response?.data?.product.length < 10) {
-//         setHasMore(false);
-//       } else {
-//         setPage(PageIndex + 1);
-//         setHasMore(true);
-//       }
-//     }
-//   } catch (error) {
-//     if (axios.isCancel(error)) {
-//       console.log('Request cancelled:', error.message);
-//     } else {
-//       console.log(error);
-//     }
-//   }
-// };
+  //     if (response?.data?.product) {
+  //       setCategoryEnnum((prev) => [...prev, ...response?.data?.product]);
+  //       if (response?.data?.product.length < 10) {
+  //         setHasMore(false);
+  //       } else {
+  //         setPage(PageIndex + 1);
+  //         setHasMore(true);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     if (axios.isCancel(error)) {
+  //       console.log('Request cancelled:', error.message);
+  //     } else {
+  //       console.log(error);
+  //     }
+  //   }
+  // };
+  console.log(catogeryEnnum)
   return (
     <form onSubmit={handleSubmit} onKeyDown={handleBtn} className='relative w-full'>
 
@@ -186,7 +188,7 @@ const Search: React.FC<searchContent> = ({ search, setSearch }) => {
 
           {catogeryEnnum.map((item, index) =>
 
-            <li onClick={() => navigate(`${item._id ? `/product?id=${item._id}` : `/product/category?q=${item.category}`}`)} key={index} className={`text-sm font-semibold text-gray-500 ps-10 cursor-pointer hover:text-gray-900 ${(item?.Product_Name?.toLowerCase()?.includes(search.toLowerCase()) || item?.Description?.toLowerCase()?.includes(search.toLowerCase()) || item?.category?.toLowerCase()?.includes(search.toLowerCase())) && 'text-gray-900'} ${NavigateIndex === index && "bg-gray-300"}`}>{item.Product_Name ?? item.category}</li>
+            <li onClick={() => navigate(`${item._id ? `/product?id=${item?._id}` : `/product/category?q=${item.category}`}`)} key={index} className={`text-sm font-semibold text-gray-500 ps-10 cursor-pointer hover:text-gray-900 ${(item?.Product_Name?.toLowerCase()?.includes(search.toLowerCase()) || item?.Description?.toLowerCase()?.includes(search.toLowerCase()) || item?.category?.toLowerCase()?.includes(search.toLowerCase())) && 'text-gray-900'} ${NavigateIndex === index && "bg-gray-300"}`}>{item.Product_Name ?? item.category}</li>
           )}
         </InfiniteScroll>
       </ul>

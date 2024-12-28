@@ -36,43 +36,47 @@ const GateWayStripe: React.FC = () => {
     useEffect(() => {
 
 
-        const localStorageShipping =localStorage.getItem('shippingInfoE_com') ?? []
+        const localStorageShipping = localStorage.getItem('shippingInfoE_com') ?? []
 
-        
-        console.log(localStorageShipping.length>0);
-        
+
+        console.log(localStorageShipping.length > 0);
+
         const getClientSecret = async () => {
             const ProductId = await query.get('PId')
             const IsCart = await query.get('cart')
 
-            if(!(localStorageShipping.length>0)) {
+            if (!(localStorageShipping.length > 0)) {
                 setError('Shippping info Address Needed!!')
-                return navigate(`/place-order/${ProductId? ProductId :IsCart? "?cart=true":""}`,{state:{}})
+                return navigate(`/place-order/${ProductId ? ProductId : IsCart ? "?cart=true" : ""}`, { state: {} })
             }
             try {
-                
-                console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeee',ProductId,IsCart);
+
+                console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeee', ProductId, IsCart);
                 if (!ProductId && !IsCart) {
                     setError('Check Url Product Id Not Foundor Wrong')
                     setIsWrongUrl(true)
                     throw new Error('Check Url Product Id Not Foundor Wrong')
                 }
+                const apiUrl = import.meta.env.VITE_API_URL; // Backend API URL from .env
                 if (ProductId) {
-                    const apiUrl = import.meta.env.VITE_API_URL; // Backend API URL from .env
                     const response = await axios.post(
                         `${apiUrl}/api/payment/product`,
                         { PId: ProductId },
                         { withCredentials: true } // Include credentials for secure communication
                     );
-                    setClientSecret(response.data.clientSecret);
+                    if (response?.data?.clientSecret) {
+                        setClientSecret(response.data.clientSecret);
+                    }
                 } else if (IsCart) {
-                    const apiUrl = import.meta.env.VITE_API_URL; 
                     const response = await axios.post(
                         `${apiUrl}/api/payment/cart`,
                         { cart: IsCart },
                         { withCredentials: true } // Include credentials for secure communication
                     );
-                    setClientSecret(response.data.clientSecret);
+                    if (response?.data?.clientSecret) {
+
+                        setClientSecret(response.data.clientSecret);
+                    }
                 }
             } catch (error) {
                 console.error("Error fetching client secret:", error);

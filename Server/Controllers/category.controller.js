@@ -1,7 +1,8 @@
 const categoryModel = require("../Models/category.model");
+const ProductModel = require("../Models/Product.model");
 const { RESPONSE_SENDER } = require("../utils/RESPONSE_SENDER");
 
-exports.getCategoryImages = async (req, res, next) => {  
+exports.getCategoryImages = async (req, res, next) => {
   try {
     const limit = 3;
 
@@ -10,8 +11,8 @@ exports.getCategoryImages = async (req, res, next) => {
 
     console.log(limit, skip);
 
-    if (!page&&!categoryQuery) {
-      const enumCate= [
+    if (!page && !categoryQuery) {
+      const enumCate = [
         "Electronics",
         "Computers",
         "Wearables",
@@ -26,22 +27,31 @@ exports.getCategoryImages = async (req, res, next) => {
         "Food",
         "Toys",
         "Camara",
-      ]
-      const category=await categoryModel.aggregate([
-        {$match:{category :{$in:enumCate}}},
-        {$group:{_id:'$category',item:{$first:"$$ROOT"}}},
-        {$replaceRoot:{newRoot:"$item"}}
-      ])
-    return RESPONSE_SENDER(res,200,{category,count:category.length})
-    }
+      ];
+      // const category=await categoryModel.aggregate([
 
+      //   {$match:{category :{$in:enumCate}}},
+      //   {$group:{_id:'$category',item:{$first:"$$ROOT"}}},
+      //   {$replaceRoot:{newRoot:"$item"}}
+      // ])
+
+      const category = await ProductModel.aggregate([
+        { $match: { category: { $in: enumCate } } },
+        {$group:{_id:"$category",item:{$first:"$$ROOT"}}},
+        {$replaceRoot:{newRoot:"$item"}},
+        {$project:{imageUrl:1,category:1}}
+      ]); 
+      
+      return RESPONSE_SENDER(res, 200, { category, count: category.length });
+    }
 
     let category;
     if (categoryQuery) {
-      category = await categoryModel
-        .find({ category: { $regex: categoryQuery, $options: "i" } })
-        // .skip(skip)
-        // .limit(limit);
+      category = await categoryModel.find({
+        category: { $regex: categoryQuery, $options: "i" },
+      });
+      // .skip(skip)
+      // .limit(limit);
       category.page = page + 1;
       // console.log(category);
       if (category.length > 0) {
@@ -53,10 +63,8 @@ exports.getCategoryImages = async (req, res, next) => {
         );
       }
     }
-    // page=1 i want 1-10 ,page=2 iwant 10-20
     category = await categoryModel.find({}).skip(skip).limit(limit);
 
-    // console.log(category);
     if (!category.length > 0) {
       return RESPONSE_SENDER(
         res,
@@ -86,12 +94,10 @@ exports.getCategoryImages = async (req, res, next) => {
   // try {
   //   // i just want one data form each category ?
 
-    
-
   //   return RESPONSE_SENDER(res,200,{category,count:category.length})
   // } catch (error) {
   //   console.log(error);
-    
+
   // }
 };
 

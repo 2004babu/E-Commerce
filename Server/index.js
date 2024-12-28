@@ -13,8 +13,8 @@ const productsRoute =require('./Routers/Product.route.js')
 const categoryRoute =require('./Routers/category.route.js')
 const PaymentRoute =require('./Routers/Payment.route.js')
 const connectMongo = require('./utils/db.js')
-
-app.use(cors({origin:true,credentials:true,methods:["POST",'GET','PATCH','DELETE']}))
+console.log(process.env.FRONTEND_URL)
+app.use(cors({origin:process.env.FRONTEND_URL,credentials:true,methods:["POST",'GET','PATCH','DELETE']}))
 app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}))
@@ -27,7 +27,7 @@ app.use('/api/product',productsRoute)
 app.use('/api/controll',categoryRoute)
 app.use('/api/payment',PaymentRoute)
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
     console.error(err.stack);
     res.status(500).json({ message: 'Internal Server Error' });
   });

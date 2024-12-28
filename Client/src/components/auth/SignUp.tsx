@@ -1,47 +1,69 @@
 import axios from 'axios'
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuthContext } from '../../Context/authContextPrivider'
 
 
-interface authState{
-  email:string,
-  userName:string,
-  password:string,
-  c_password:string
+interface authState {
+  email: string,
+  userName: string,
+  password: string,
+  c_password: string
 
 }
 
 const SignUp = () => {
+
+  const [formData, setFormData] = useState<authState>({ email: "", password: "", userName: "", c_password: "" })
+  const {error, setError,setUser,user} = useAuthContext()
+  const navigate=useNavigate()
+
+
+  useEffect(()=>{
+if (user?._id) {
   
-  const [formData,setFormData]=useState<authState>({email:"",password:"",userName:"",c_password:""})
-  const [error,setError]=useState<string>('')
-
-  const handleSubmit =async(e:React.FormEvent<HTMLFormElement>)=>{
-e.preventDefault()
-console.log(
-  formData
-);
-
-try {
-
-  const apiurl =import.meta.env.VITE_API_URL;
-
-  const response= await axios.post(`${apiurl}/api/auth/signup`,formData,{withCredentials:true})
-
-if (!response?.data?.user) throw  new Error ('Registration error ')
-
-
-  console.log(response?.data?.user);
-  
-  
-} catch (error) {
-  console.log(error);
-  setError((error as Error).message)
-  
+  return navigate('/')
 }
+
+  },[user])
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    console.log(
+      formData
+    );
+
+    const isValidEmail = (email:string) => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Standard regex for email validation
+      return emailRegex.test(email);
+    };
+    
+    
+    if (formData.password.length<6||!isValidEmail(formData.email)) {
+      setError
+      ('Check password and email!!')
+      return
+    }
+
+    try {
+
+      const apiurl = import.meta.env.VITE_API_URL;
+
+      const response = await axios.post(`${apiurl}/api/auth/signup`, formData, { withCredentials: true })
+
+      if (response?.data?.user){
+        setUser(response?.data?.user)
+        return navigate('/')
+      }else {throw new Error('Registration error ')}
+
+    } catch (error) {
+      console.log(error);
+      setError((error as Error).message)
+
+    }
   }
-  const handleChange=async(e:React.ChangeEvent<HTMLInputElement>)=>{
-setFormData({...formData,[e.target.name]:e.target.value});
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   }
 

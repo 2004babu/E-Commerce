@@ -928,7 +928,7 @@ exports.getRecentView = async (req, res, next) => {
     const limit = 10;
     const skip = page > 0 ? page * limit : 0;
     if (!user_id) {
-      return RESPONSE_SENDER(res, 401, {
+      return RESPONSE_SENDER(res, 200, {
         message: "userId Not Found error in Product controller ",
       });
     }

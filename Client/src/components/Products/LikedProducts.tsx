@@ -54,7 +54,9 @@ const LikedProducts = () => {
 
     return (
         <div id='likedproducts' className='w-full h-full p-2 mt-[65px] '>
-            {Product.length > 0 && <ListProducts className="flex flex-row p-2  justify-start items-start gap-3 flex-wrap" endMSG={listEndMSG} scrollFunc={fetchLikedProducts} haseMore={hasMore} Product={Product} setProduct={setProduct} />}
+            {Product.length > 0 ? <ListProducts className="flex flex-row p-2  justify-start items-start gap-3 flex-wrap" endMSG={listEndMSG} scrollFunc={fetchLikedProducts} haseMore={hasMore} Product={Product} setProduct={setProduct} />:<div className="flex flex-col w-full p-3 font-bold text-xl h-80">
+          Your Like List Is Empty
+        </div>}
         </div>
     )
 }

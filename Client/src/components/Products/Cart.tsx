@@ -45,11 +45,11 @@ const Cart = () => {
       const response = await axios.get(`${apiurl}/api/product/cart/?page=${cartPage}`, { withCredentials: true })
 
 
-      if (response.data.product) {
+      if (response.data?.product) {
         setProduct((prev) => [...prev, ...response.data.product]);
         setCartPage(page + 1)
         setHaseMore(true)
-      } if (response.data.product.length < 10) {
+      } if (response.data?.product?.length < 10) {
         setHaseMore(false)
       }
 
@@ -154,6 +154,7 @@ const Cart = () => {
     <div id='cartHead' className='flex flex-col w-full h-full p-2 relative overflow-y-scroll overflow-x-hidden mt-[65px] '>
 
       {Product && Product.length ?
+        <>
         <ListProducts
           className="flex flex-row p-2  justify-start items-start gap-3 flex-wrap"
           scrollFunc={fetchCart}
@@ -164,13 +165,13 @@ const Cart = () => {
           Rating={false}
         />
         
-
+        <button onClick={()=>{navigate('/place-order?cart=true',{state:{from:location.href}})}} className='bg-yellow-500 px-3 py-2'>BUY CART</button>
+</>
         :
         <div className="flex flex-col w-full p-3 font-bold text-xl h-80">
           Your Cart Is Empty
         </div>
       }
-      <button onClick={()=>navigate('/place-order?cart=true',{state:{from:location.href}})} className='bg-yellow-500 px-3 py-2'>BUY CART</button>
 
       <RelatableProducts endMSG={listEndMSG} setRelatedProduct={setRelatedProduct} RelatedhasMore={RelatedhasMore} fetchRelatedProduct={fetchRelatedProduct} RelatedProduct={RelatedProduct} />
 

@@ -8,6 +8,7 @@ import Recent_Products from './Recent_Products'
 import { productType } from '../../utils/Types'
 import RelatableProducts from './RelatableProducts'
 import { motion } from "framer-motion"
+import Loading from '../../static/Loading'
 
 const ViewProduct = () => {
 
@@ -43,17 +44,18 @@ const ViewProduct = () => {
     })
 
     const [isCart, setIsCart] = useState<boolean>(false)
+    const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
     const [ImageN, setImageN] = useState<number>(0)
-    
+
     const [clear, setClear] = useState<boolean>(false)
 
-     //relatedProducts
+    //relatedProducts
 
-     const [RelatedProduct, setRelatedProduct] = useState<productType[]>([])
-     const [Relatedpage, setRelatedpage] = useState<number>(0)
-     const [RelatedhasMore, setRelatedHaseMore] = useState<boolean>(true)
- 
+    const [RelatedProduct, setRelatedProduct] = useState<productType[]>([])
+    const [Relatedpage, setRelatedpage] = useState<number>(0)
+    const [RelatedhasMore, setRelatedHaseMore] = useState<boolean>(true)
+
 
     ///////recent  Products
     const [page, setPage] = useState<number>(0)
@@ -64,24 +66,25 @@ const ViewProduct = () => {
 
 
         fetchAll();
-    }, [location.state])    
+    }, [location.state])
 
     const fetchProduct = async () => {
         try {
             const ProductId = (await query).get('id');
             if (!ProductId) {
-              return  setError('Check Url Product Id Not Foundor Wrong')  
-                
-            }  
+                setIsPageLoaded(true)
+                return setError('Check Url Product Id Not Foundor Wrong')
+
+            }
             const response = await axios.get(`${apiurl}/api/product/p/${ProductId}`, { withCredentials: true })
 
             //this one for recent history session log///
             console.log(user._id)
             if (user._id) {
                 try {
-                    await axios.get(`${apiurl}/api/product/viewlog?viewId=${ProductId}`, { withCredentials: true })    
+                    await axios.get(`${apiurl}/api/product/viewlog?viewId=${ProductId}`, { withCredentials: true })
 
-                } catch (error) {        
+                } catch (error) {
                     console.log(error);
                 }
             }
@@ -123,7 +126,7 @@ const ViewProduct = () => {
     };
 
     console.log(loading);
-    
+
 
     const handleShare = async () => {
 
@@ -182,7 +185,7 @@ const ViewProduct = () => {
 
 
     ///comment section
- 
+
 
     const CommentSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -301,10 +304,11 @@ const ViewProduct = () => {
         }
     }
 
-    if (isWrongUrl) {
-        // setError('Check Url Product Id Not Foundor Wrong')
+    if (isWrongUrl && isPageLoaded) {
+
         return <NotFound />
     }
+    console.log(isWrongUrl && isPageLoaded)
 
 
     const fetchRecentView = async () => {
@@ -343,7 +347,7 @@ const ViewProduct = () => {
     </div>
 
 
-   
+
 
     const fetchRelatedProduct = async () => {
         const apiurl = import.meta.env.VITE_API_URL;
@@ -371,7 +375,7 @@ const ViewProduct = () => {
     }
     return (
         <>
-            {(!loading && ProductDetails._id) && <motion.div
+            {(!loading && ProductDetails._id) ? <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -428,11 +432,11 @@ const ViewProduct = () => {
                     </div>
                     <CommentList CommentSubmit={CommentSubmit} handleThumpUp={handleThumpUp} handleThumpDown={handleThumpDown} clearCMTInput={clear} ProductDetails={ProductDetails} />
                 </div>
-            </motion.div>}
-            {!loading&&<RelatableProducts endMSG={listEndMSG} setRelatedProduct={setRelatedProduct} RelatedhasMore={RelatedhasMore} fetchRelatedProduct={fetchRelatedProduct} RelatedProduct={RelatedProduct} />}
+            </motion.div> : <div className='h-screen w-screen flex justify-center items-center '>  <Loading />
+            </div>}
+            {(!loading )&& <RelatableProducts endMSG={listEndMSG} setRelatedProduct={setRelatedProduct} RelatedhasMore={RelatedhasMore} fetchRelatedProduct={fetchRelatedProduct} RelatedProduct={RelatedProduct} />}
 
-            {user._id && <Recent_Products endMSG={listEndMSG} RecentProduct={ViewProduct} RecenthasMore={ViewhasMore} fetchRecentProduct={fetchRecentView} setRecentProduct={setViewProduct} />
-            }        </>
+            {user._id  && <Recent_Products endMSG={listEndMSG} RecentProduct={ViewProduct} RecenthasMore={ViewhasMore} fetchRecentProduct={fetchRecentView} setRecentProduct={setViewProduct} />            }   </>
     )
 }
 

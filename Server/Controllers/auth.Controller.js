@@ -8,8 +8,14 @@ exports.loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     console.log(email, password);
-
-    if (!email || !password) {
+    const isValidEmail = (email) => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Standard regex for email validation
+      return emailRegex.test(email);
+    };
+    
+    
+    
+    if (!email || !password ||  !password.length>6||!isValidEmail(email)) {
       return RESPONSE_SENDER(res, 401, { message: "Fill the value" });
     }
 
@@ -19,7 +25,7 @@ exports.loginUser = async (req, res, next) => {
       return RESPONSE_SENDER(res, 401, { message: "User not found" });
     }
 
-    console.log(password, user);
+ 
 
     const validPassword = await bcrypt.compare(password, user.password);
 
@@ -36,10 +42,14 @@ exports.loginUser = async (req, res, next) => {
 
 exports.signUp = async (req, res, next) => {
   try {
-    console.log(req.body);
     const { userName, email, password, c_password } = req.body;
 
-    if (!userName || !email || !password || !c_password) {
+
+    const isValidEmail = (email) => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Standard regex for email validation
+      return emailRegex.test(email);
+    };
+    if (!userName || !email || !password || !c_password|| !isValidEmail(email)) {
       return RESPONSE_SENDER(res, 300, {
         message: "Fill the value of inputs!",
       });
@@ -77,7 +87,7 @@ exports.loaduser = async (req, res, next) => {
     console.log(req.cookies);
     
     if (!babu) {
-      return RESPONSE_SENDER(res, 401, { message: "cookie expires " });
+      return RESPONSE_SENDER(res, 200, { message: "cookie expires " });
     }
     const { id } = await jwt.verify(babu, process.env.JWT_SECRET, {
       algorithms: "HS256",
@@ -85,12 +95,12 @@ exports.loaduser = async (req, res, next) => {
     console.log(id);
 
     if (!id) {
-      return RESPONSE_SENDER(res, 401, { message: "cookie expires " });
+      return RESPONSE_SENDER(res, 200, { message: "cookie expires " });
     }
     const user = await userModel.findById(id);
 
     if (!user) {
-      return RESPONSE_SENDER(res, 401, { message: "user Not Found" });
+      return RESPONSE_SENDER(res, 200, { message: "user Not Found" });
     }
     if(process.env.NODE_ENV==="Development"){
       return res.status(200).json({ success: true,user });
@@ -102,6 +112,7 @@ exports.loaduser = async (req, res, next) => {
     }
   } catch (error) {
     console.log(error);
+
   }
 };
 

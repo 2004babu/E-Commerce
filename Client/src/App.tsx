@@ -17,12 +17,13 @@ import FilteredProducts from './components/Products/FilteredProducts';
 import LikedProducts from './components/Products/LikedProducts';
 import NotFound from './components/static/NotFound';
 import Cart from './components/Products/Cart';
-import SetCate from './components/Admin/category/SetCate';
+// import SetCate from './components/Admin/category/SetCate';
 import DashComments from './components/Admin/DashBoard/DashComments';
 import Editable_Product from './components/Admin/Products/Editable_Product';
 import GateWayStripe from './components/Payments/GateWayStripe';
 import OrderPlacingPage from './components/OrderPalce/OrderPlacingPage';
 import LoadCompletePage from './components/Payments/LoadCompletePage';
+import RecentProducts from './components/Products/RecentProducts';
 
 
 
@@ -76,9 +77,10 @@ const [loadUser,setLoadUSer]=useState<boolean>(false)
         <Route path="/addproducts" element={<IsAuthUser requiredRole='Admin'>< AddProduct /></IsAuthUser>} />
         <Route path="/product" element={< ViewProduct />} />
         <Route path="/product/category" element={< FilteredProducts />} />
+        <Route path="/product/recent" element={<IsAuthUser requiredRole='user'>< RecentProducts /></IsAuthUser>} />
         <Route path="/liked" element={<IsAuthUser requiredRole='user'>< LikedProducts /></IsAuthUser>} />
         <Route path="/cart" element={<IsAuthUser requiredRole='user'>< Cart /></IsAuthUser>} />
-        <Route path="/set_category" element={<IsAuthUser requiredRole='Admin'>< SetCate /></IsAuthUser>} />
+        {/* <Route path="/set_category" element={<IsAuthUser requiredRole='Admin'>< SetCate /></IsAuthUser>} /> */}
 
         <Route path="/dashboard"  >
           <Route index element={<IsAuthUser requiredRole='Admin'>< OverView /></IsAuthUser>} />

@@ -6,10 +6,13 @@ import ListProducts from './ListProducts';
 
 
 import { productType } from '../utils/Types'; 
-import NotFound from '../static/NotFound';
+import Loading from '../static/Loading';
 
 
 const FilteredProducts = () => {
+
+        const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false)
+    
     const navigate=useNavigate()
     const [page, setPage] = useState<number>(0)
     const [hasMore, setHaseMore] = useState<boolean>(true)
@@ -28,6 +31,9 @@ const FilteredProducts = () => {
         fetchProduct()
     }, [])
 
+
+
+
     const fetchProduct = async () => {
         const apiurl = import.meta.env.VITE_API_URL;
         // setLoading(true)
@@ -45,9 +51,10 @@ const FilteredProducts = () => {
             setError((error as Error).message)
 
         } finally {
-            // setLoading(false)
+            setIsPageLoaded(true)
         }
     }
+
     // const handleLike = async (e: React.MouseEvent<HTMLElement, MouseEvent>, productId: string) => {
     //     const targetClassList = e.currentTarget.classList;
     //     const apiurl = import.meta.env.VITE_API_URL;
@@ -111,7 +118,7 @@ const FilteredProducts = () => {
 
     return (
         <div id='filteredProducts' className='w-screen h-screen p-2 '>
-            {Product.length > 0 ? <ListProducts  Rating={false} endMSG={filterEndMSG} className="flex flex-row p-2 mt-[65px]  justify-start items-start gap-3 flex-wrap" scrollFunc={fetchProduct} haseMore={hasMore} setProduct={setProduct} Product={Product} />:<NotFound/>}
+            {(isPageLoaded&&Product.length > 0 )? <ListProducts  Rating={false} endMSG={filterEndMSG} className="flex flex-row p-2 mt-[65px]  justify-start items-start gap-3 flex-wrap" scrollFunc={fetchProduct} haseMore={hasMore} setProduct={setProduct} Product={Product} />:<Loading/>}
         </div>
 
     )

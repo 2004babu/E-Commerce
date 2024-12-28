@@ -3,6 +3,7 @@ import ListProducts from '../../Products/ListProducts'
 
 
 import { productType } from '../../utils/Types' 
+import Loading from '../../static/Loading'
 
 
 interface RelatableTtype {
@@ -45,9 +46,8 @@ const RelatableProducts: React.FC<RelatableTtype> = ({
                     likeShare={likeShare}
                     children={children}
                 /> :
-                <div className="flex flex-col w-full p-3 font-bold text-xl h-80">
-                    random fetch will be Add
-                </div>
+                <div className='h-screen w-screen flex justify-center items-center '>  <Loading />
+            </div>
             }
         </div>
     )
