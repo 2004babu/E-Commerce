@@ -32,11 +32,7 @@ const logger = winston.createLogger({
   ]
 });
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
-  dotfiles: 'ignore', // Prevent .env or other hidden files from being served
-  index: false, // Disable directory listing
-  maxAge:'1d'
-}));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 connectMongo()
 
 app.use('/api/auth',authRoute)
@@ -45,10 +41,10 @@ app.use('/api/controll',categoryRoute)
 app.use('/api/payment',PaymentRoute)
 
 
-app.use(express.static(path.join(__dirname,'../Client/dist'),{dotfiles:'ignore',index:false, maxAge:'1d'}))
-app.use(express.static(path.join(__dirname,'../Client/dist/index.html'),{dotfiles:'ignore',index:false, maxAge:'1d'}))
+app.use(express.static(path.join(__dirname,'../Client/dist')))
+app.use(express.static(path.join(__dirname,'../Client/dist/index.html')))
 
-app.get('/',(req,res)=>{
+app.get('*',(req,res)=>{
   res.sendFile(path.join(__dirname,'../Client/dist/index.html'))
 })
 
