@@ -40,14 +40,13 @@ const StripePayments: React.FC = () => {
 
         setLoading(true);
 
+                const apiUrl = import.meta.env.VITE_API_URL; // Backend API URL from .env
     
         try {
             const {error  } = await stripe.confirmPayment({
                 elements,
                 confirmParams: {
-                  // Make sure to change this to your payment completion page
-                //   return_url: `http://localhost:5173/pay/complete?PId=${query.get('PId')}`,
-                return_url:'http://localhost:5173/payment/complete?',
+                return_url:`${apiUrl}/payment/complete?`,
                   receipt_email:'bb5696359@gmail.com'
                 },
               });
