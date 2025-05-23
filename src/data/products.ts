@@ -91,7 +91,7 @@ export const categories = [
   },
   {
     _id: "3",
-    category: "Wearables",
+    category: "Wearables", 
     imageUrl: ["https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg"]
   }
 ];
