@@ -12,7 +12,7 @@ export interface productType {
     imageUrl:string [],
     Product_Name: string,
     P_Status: string,
-    Comments: [{ userId: string, _id: string, comment: string, userName: string, likes: [{ userId: string }] }],
+    Comments: [{ userId: string, _id: string, comment: string, userName: string, likes: [{ userId: string,_id:string }] }],
     Ratings: [{ userId: string, _id: string, Rate: number }],
     likedBy: [{ userId: string, _id: string }],
     totalRate: number,

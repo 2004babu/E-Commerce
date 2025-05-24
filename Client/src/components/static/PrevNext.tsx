@@ -39,19 +39,7 @@ const PrevNext: React.FC<typeContent> = ({ btnLenght = 2,
     }
     const specifyClick = (e:React.MouseEvent<HTMLButtonElement>,n:number) => {
         console.log(n)
-        // if (n >= t_number) {
-        //     return
-        // }
-        // if (n === 0) {
-        //     return
-        // }
-        // if (n === t_number) {
-        //     return
-        // }
-        // if (c_number === n) {
-        //     return
-        // }
-        // setC_number(n)
+        
 
         console.dir(e.currentTarget.classList.replace('bg-gray-500','bg-yellow-400'));
         

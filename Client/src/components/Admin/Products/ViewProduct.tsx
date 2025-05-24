@@ -10,6 +10,11 @@ import RelatableProducts from './RelatableProducts'
 import { motion } from "framer-motion"
 import Loading from '../../static/Loading'
 
+
+//for portfolio wepsite statci data 
+import { relatedProductsData } from '../../../Static_data.json'
+
+
 const ViewProduct = () => {
 
     const navigate = useNavigate()
@@ -37,7 +42,7 @@ const ViewProduct = () => {
         imageUrl: [''],
         Product_Name: '',
         P_Status: '',
-        Comments: [{ userId: '', _id: "", comment: "", userName: "", likes: [{ userId: '' }] }],
+        Comments: [{ userId: '', _id: "", comment: "", userName: "", likes: [{ userId: '' ,_id:''}] }],
         Ratings: [{ userId: "", _id: "", Rate: 0 }],
         likedBy: [{ userId: '', _id: "" }],
         totalRate: 0
@@ -69,8 +74,10 @@ const ViewProduct = () => {
     }, [location.state])
 
     const fetchProduct = async () => {
+        console.log('fetch product');
+        
+        const ProductId = (await query).get('id');
         try {
-            const ProductId = (await query).get('id');
             if (!ProductId) {
                 setIsPageLoaded(true)
                 return setError('Check Url Product Id Not Foundor Wrong')
@@ -79,7 +86,7 @@ const ViewProduct = () => {
             const response = await axios.get(`${apiurl}/api/product/p/${ProductId}`, { withCredentials: true })
 
             //this one for recent history session log///
-            console.log(user._id)
+            // console.log(user._id)
             if (user._id) {
                 try {
                     await axios.get(`${apiurl}/api/product/viewlog?viewId=${ProductId}`, { withCredentials: true })
@@ -88,18 +95,21 @@ const ViewProduct = () => {
                     console.log(error);
                 }
             }
-            console.log(response);
+            // console.log(response);
 
             if (response.data.product) {
                 setProductDetails(response.data.product)
             } else {
-                console.log('wrong');
-
+                // console.log('wrong');
+                
+                
+                
             }
         } catch (error) {
-            console.log(error);
-            setError((error as Error).message)
+            // console.log(error);
+            // setError((error as Error).message)
             setIsWrongUrl(true)
+        
         }
     }
 
@@ -366,13 +376,38 @@ const ViewProduct = () => {
                 setRelatedHaseMore(false)
             }
         } catch (error) {
-            console.log(error);
-            setError((error as Error).message)
+            setRelatedProduct(
+                relatedProductsData.map((item: any) => ({
+                    ...item,
+                    Comments: item.Comments && item.Comments.length > 0
+                        ? item.Comments
+                        : [{ userId: '', _id: '', comment: '', userName: '', likes: [{ userId: '', _id: '' }] }],
+                    Ratings: item.Ratings && item.Ratings.length > 0
+                        ? item.Ratings
+                        : [{ userId: '', _id: '', Rate: 0 }],
+                    likedBy: item.likedBy && item.likedBy.length > 0
+                        ? item.likedBy
+                        : [{ userId: '', _id: '' }],
+                    Price: item.Price || { MRP: '', Offer: '' },
+                    imageUrl: item.imageUrl && item.imageUrl.length > 0 ? item.imageUrl : [''],
+                    totalRate: typeof item.totalRate === 'number' ? item.totalRate : 0,
+                    Product_Name: item.Product_Name || '',
+                    P_Status: item.P_Status || '',
+                    inStock: item.inStock || '',
+                    category: item.category || '',
+                    description: item.description || '',
+                    _id: item._id || '',
+                }))
+            )
+            // console.log(error);
+            // setError((error as Error).message)
 
         } finally {
             // setLoading(false)
         }
     }
+    console.log(RelatableProducts);
+    
     return (
         <>
             {(!loading && ProductDetails._id) ? <motion.div

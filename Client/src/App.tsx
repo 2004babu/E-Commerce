@@ -17,7 +17,6 @@ import FilteredProducts from './components/Products/FilteredProducts';
 import LikedProducts from './components/Products/LikedProducts';
 import NotFound from './components/static/NotFound';
 import Cart from './components/Products/Cart';
-// import SetCate from './components/Admin/category/SetCate';
 import DashComments from './components/Admin/DashBoard/DashComments';
 import Editable_Product from './components/Admin/Products/Editable_Product';
 import GateWayStripe from './components/Payments/GateWayStripe';
@@ -30,7 +29,7 @@ import RecentProducts from './components/Products/RecentProducts';
 function App() {
   const { user, setError, setUser } = useAuthContext();
 
-const [loadUser,setLoadUSer]=useState<boolean>(false)
+  const [loadUser, setLoadUSer] = useState<boolean>(false)
   useEffect(() => {
     const loadUser = async () => {
       const apiurl = import.meta.env.VITE_API_URL;
@@ -47,7 +46,7 @@ const [loadUser,setLoadUSer]=useState<boolean>(false)
       } catch (error) {
         console.log(error);
         setError((error as Error).message);
-      }finally{
+      } finally {
         setLoadUSer(true)
       }
     };
@@ -55,13 +54,13 @@ const [loadUser,setLoadUSer]=useState<boolean>(false)
     loadUser()
   }, [])
 
-
-
+ 
   return (
+    
     <>
       <ToastContainer />
       <HomeHeader />
-      {loadUser?<Routes>
+      {loadUser ? <Routes>
 
         <Route path="/" element={<Home />} />
         <Route path="/login" element={user?._id ? <Home /> : <Login />} />
@@ -86,21 +85,21 @@ const [loadUser,setLoadUSer]=useState<boolean>(false)
           <Route index element={<IsAuthUser requiredRole='Admin'>< OverView /></IsAuthUser>} />
           <Route path="comments" element={<IsAuthUser requiredRole='Admin'>< DashComments /></IsAuthUser>} />
         </Route>
-{/* this place-order for Cart Products  */}
+        {/* this place-order for Cart Products  */}
         <Route path="/place-order" element={<IsAuthUser requiredRole='user'><OrderPlacingPage /></IsAuthUser>} />
 
-{/* this place-order for Single Product  */}
-        <Route path="/place-order/:productId" element={<IsAuthUser requiredRole='user'><OrderPlacingPage /></IsAuthUser>}  />
+        {/* this place-order for Single Product  */}
+        <Route path="/place-order/:productId" element={<IsAuthUser requiredRole='user'><OrderPlacingPage /></IsAuthUser>} />
 
 
         <Route path='/pay/*' element={<IsAuthUser requiredRole='user'><GateWayStripe /></IsAuthUser>} />
         <Route path='/payment/complete' element={<IsAuthUser requiredRole='user'>
-          <LoadCompletePage/>
+          <LoadCompletePage />
         </IsAuthUser>} />
 
 
         <Route path='*' element={<NotFound />} />
-      </Routes>:<></>}
+      </Routes> : <></>}
 
     </>
 
@@ -108,3 +107,5 @@ const [loadUser,setLoadUSer]=useState<boolean>(false)
 }
 
 export default App;
+
+

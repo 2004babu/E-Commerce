@@ -9,6 +9,12 @@ import { productType } from '../utils/Types'
 import axios from 'axios'
 import { useAuthContext } from '../../Context/authContextPrivider'
 
+
+
+//for portfolio wepsite statci data 
+import { relatedProductsData } from '../../Static_data.json'
+
+
 const Home = () => {
   const [search, setSearch] = useState<string>('')
 
@@ -91,9 +97,31 @@ const Home = () => {
         setRelatedHaseMore(false)
       }
     } catch (error) {
-      console.log(error);
-      setError((error as Error).message)
-
+      // console.log(error);
+      // setError((error as Error).message)
+setRelatedProduct(
+                relatedProductsData.map((item: any) => ({
+                    ...item,
+                    Comments: item.Comments && item.Comments.length > 0
+                        ? item.Comments
+                        : [{ userId: '', _id: '', comment: '', userName: '', likes: [{ userId: '', _id: '' }] }],
+                    Ratings: item.Ratings && item.Ratings.length > 0
+                        ? item.Ratings
+                        : [{ userId: '', _id: '', Rate: 0 }],
+                    likedBy: item.likedBy && item.likedBy.length > 0
+                        ? item.likedBy
+                        : [{ userId: '', _id: '' }],
+                    Price: item.Price || { MRP: '', Offer: '' },
+                    imageUrl: item.imageUrl && item.imageUrl.length > 0 ? item.imageUrl : [''],
+                    totalRate: typeof item.totalRate === 'number' ? item.totalRate : 0,
+                    Product_Name: item.Product_Name || '',
+                    P_Status: item.P_Status || '',
+                    inStock: item.inStock || '',
+                    category: item.category || '',
+                    description: item.description || '',
+                    _id: item._id || '',
+                }))
+            )
     } finally {
       // setLoading(false)
     }

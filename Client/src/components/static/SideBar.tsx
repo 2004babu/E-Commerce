@@ -43,7 +43,7 @@ const handleLogin =()=>{
   setOpen(false)
 }
   return (
-    <div className="fixed top-0 z-10 w-screen bg-black-200/[0.2] h-screen  flex flex-row justify-start ">
+    <div className="fixed top-0 z-20 left-0 w-screen bg-black-200/[0.2] h-screen  flex flex-row justify-start ">
 
 
       <div className={`  flex  flex-col gap-4  pt-4 mt-2 bg-black:/[0.3] bg-white drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)] rounded-md h-screen w-56 justify-start items-center ms-2  ${(open && isAdmin ? 'max-[465px]:hidden' : '')}`}>
