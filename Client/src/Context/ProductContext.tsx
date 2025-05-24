@@ -26,7 +26,7 @@ const ProductContext = ({ children }: { children: ReactNode }) => {
         imageUrl: [''],
         Product_Name: '',
         P_Status: '',
-        Comments: [{userId:'',_id:"",comment:"",userName:"",likes:[{userId:''}]}],
+        Comments: [{userId:'',_id:"",comment:"",userName:"",likes:[{userId:'',_id:""}]}],
         Ratings: [{userId:"",_id:"",Rate:0}],
         likedBy: [{ userId: '', _id: "" }],
         totalRate:0
